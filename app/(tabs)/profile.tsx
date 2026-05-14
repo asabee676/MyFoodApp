@@ -1,9 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, Image, TouchableOpacity, Switch, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useLocation } from '../../context/LocationContext';
+import { useRouter } from 'expo-router';
 
 export default function ProfileScreen() {
+  const router = useRouter();
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
+  const { location } = useLocation();
 
   const renderSettingItem = (icon: any, title: string, subtitle?: string, hasSwitch?: boolean, value?: boolean, onValueChange?: (val: boolean) => void) => (
     <TouchableOpacity style={styles.settingItem} disabled={hasSwitch}>
@@ -68,7 +72,7 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>My Account</Text>
           <View style={styles.sectionCard}>
-            {renderSettingItem('location-outline', 'Delivery Addresses', 'East Legon, Accra')}
+            {renderSettingItem('location-outline', 'Delivery Addresses', location)}
             {renderSettingItem('card-outline', 'Payment Methods', 'Visa ending in 4242')}
             {renderSettingItem('heart-outline', 'Favorite Restaurants')}
           </View>
@@ -92,9 +96,9 @@ export default function ProfileScreen() {
         </View>
 
         {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutBtn}>
+        <TouchableOpacity style={styles.logoutBtn} onPress={() => router.replace('/')}>
           <Ionicons name="log-out-outline" size={22} color="#E53935" />
-          <Text style={styles.logoutText}>Log Out</Text>
+          <Text style={styles.logoutText}>Log Out / Sign In</Text>
         </TouchableOpacity>
 
         <Text style={styles.versionText}>Version 1.0.0</Text>

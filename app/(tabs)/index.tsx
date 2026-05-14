@@ -3,11 +3,13 @@ import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, FlatList, 
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import data from '../../data/sample-restaurants.json';
+import { useLocation } from '../../context/LocationContext';
 
 export default function HomeScreen() {
   const router = useRouter();
   const { categories, restaurants, promos } = data;
   const [searchQuery, setSearchQuery] = useState('');
+  const { location } = useLocation();
 
   // Filter restaurants based on search query
   const filteredRestaurants = restaurants.filter(restaurant => 
@@ -54,11 +56,11 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>Good morning 👋</Text>
-          <View style={styles.locationContainer}>
+          <TouchableOpacity style={styles.locationContainer} onPress={() => router.push('/location-picker')}>
             <Ionicons name="location" size={16} color="#E53935" />
-            <Text style={styles.locationText}>East Legon, Accra</Text>
+            <Text style={styles.locationText} numberOfLines={1}>{location}</Text>
             <Ionicons name="chevron-down" size={16} color="#333" />
-          </View>
+          </TouchableOpacity>
         </View>
         <TouchableOpacity style={styles.profileBtn}>
           <Image source={{ uri: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Abel' }} style={styles.profileImg} />

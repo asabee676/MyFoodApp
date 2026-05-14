@@ -3,11 +3,13 @@ import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Pla
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useCart } from '../context/CartContext';
+import { useLocation } from '../context/LocationContext';
 
 export default function CartScreen() {
   const router = useRouter();
   const { items, updateQuantity, totalItems, totalPrice, clearCart } = useCart();
-  
+  const { location } = useLocation();
+
   const deliveryFee = items.length > 0 ? 5.00 : 0; // Simple flat delivery fee for mock
   const total = totalPrice + deliveryFee;
 
@@ -59,16 +61,16 @@ export default function CartScreen() {
                 <Text style={styles.itemName}>{item.name}</Text>
                 <Text style={styles.itemPrice}>₵{item.price.toFixed(2)}</Text>
               </View>
-              
+
               <View style={styles.quantityControls}>
-                <TouchableOpacity 
-                  style={styles.qtyBtn} 
+                <TouchableOpacity
+                  style={styles.qtyBtn}
                   onPress={() => updateQuantity(item.id, item.quantity - 1)}
                 >
                   <Ionicons name={item.quantity === 1 ? "trash-outline" : "remove"} size={16} color={item.quantity === 1 ? "#E53935" : "#333"} />
                 </TouchableOpacity>
                 <Text style={styles.qtyText}>{item.quantity}</Text>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.qtyBtn}
                   onPress={() => updateQuantity(item.id, item.quantity + 1)}
                 >
@@ -86,7 +88,7 @@ export default function CartScreen() {
           </View>
           <View style={styles.deliveryRow}>
             <Ionicons name="location-outline" size={20} color="#666" />
-            <Text style={styles.deliveryText}>East Legon, Accra</Text>
+            <Text style={styles.deliveryText}>{location}</Text>
           </View>
         </View>
 
