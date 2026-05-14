@@ -1,0 +1,97 @@
+{
+  "restaurants": [
+    {
+      "id": "r1",
+      "name": "The Buka Restaurant",
+      "cuisine": ["Ghanaian", "Local"],
+      "image": "https://images.unsplash.com/photo-1567521464027-f127ff144326?w=600&q=80",
+      "rating": 4.8,
+      "reviews": 312,
+      "deliveryTime": "20-30 min",
+      "deliveryFee": 1.50,
+      "minOrder": 5.00,
+      "promo": "20% OFF",
+      "featured": true,
+      "tags": ["Jollof Rice", "Waakye", "Banku"],
+      "address": "Osu, Accra",
+      "menu": [
+        { "id": "m1", "category": "Rice Dishes", "name": "Waakye with Assorted Meat", "desc": "Authentic waakye served with shito, gari, spaghetti, and assorted meat.", "price": 12.50, "image": "https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=300&q=80" },
+        { "id": "m2", "category": "Rice Dishes", "name": "Jollof Rice + Chicken", "desc": "Perfectly seasoned tomato rice with grilled chicken and fried plantain.", "price": 8.50, "image": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=300&q=80" },
+        { "id": "m3", "category": "Local", "name": "Banku & Tilapia", "desc": "Freshly grilled tilapia served with banku and spicy pepper sauce.", "price": 15.00, "image": "https://images.unsplash.com/photo-1574484284002-952d92456975?w=300&q=80" },
+        { "id": "m5", "category": "Drinks", "name": "Sobolo Drink (Large)", "desc": "Chilled hibiscus drink with ginger and pineapple.", "price": 2.50, "image": "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=300&q=80" }
+      ]
+    },
+    {
+      "id": "r2",
+      "name": "Azmera Restaurant",
+      "cuisine": ["Ghanaian", "Premium"],
+      "image": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80",
+      "rating": 4.6,
+      "reviews": 198,
+      "deliveryTime": "30-45 min",
+      "deliveryFee": 2.00,
+      "minOrder": 8.00,
+      "promo": null,
+      "featured": true,
+      "tags": ["Fufu", "Soups", "Ampesi"],
+      "address": "Roman Ridge, Accra",
+      "menu": [
+        { "id": "m6", "category": "Soups", "name": "Fufu with Light Soup", "desc": "Freshly pounded fufu served with goat meat light soup.", "price": 14.00, "image": "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=300&q=80" },
+        { "id": "m7", "category": "Local", "name": "Ampesi & Kontomire", "desc": "Boiled yam and plantain with spicy kontomire (cocoyam leaves) stew.", "price": 11.50, "image": "https://images.unsplash.com/photo-1598514982901-5f93e0d08dc0?w=300&q=80" },
+        { "id": "m8", "category": "Sides", "name": "Kelewele", "desc": "Spicy fried plantain cubes with roasted groundnuts.", "price": 4.50, "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=300&q=80" }
+      ]
+    },
+    {
+      "id": "r3",
+      "name": "Osu Night Market Food Court",
+      "cuisine": ["Street Food", "Fast Food"],
+      "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80",
+      "rating": 4.5,
+      "reviews": 421,
+      "deliveryTime": "15-25 min",
+      "deliveryFee": 1.00,
+      "minOrder": 4.00,
+      "promo": "Free Delivery",
+      "featured": false,
+      "tags": ["Kenkey", "Chichinga", "Snacks"],
+      "address": "Osu, Accra",
+      "menu": [
+        { "id": "m10", "category": "Local", "name": "Ga Kenkey & Fried Fish", "desc": "Classic Ga kenkey with hot pepper, shito, and fried fish.", "price": 6.00, "image": "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=300&q=80" },
+        { "id": "m11", "category": "Grills", "name": "Beef Chichinga (Suya)", "desc": "Spicy beef skewers straight from the grill.", "price": 3.00, "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&q=80" },
+        { "id": "m14", "category": "Drinks", "name": "Asana", "desc": "Refreshing local corn drink.", "price": 2.00, "image": "https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=300&q=80" }
+      ]
+    },
+    {
+      "id": "r4",
+      "name": "Peter Pan Fast Food",
+      "cuisine": ["Fried Chicken", "Fast Food"],
+      "image": "https://images.unsplash.com/photo-1512152272829-e3139592d56f?w=600&q=80",
+      "rating": 4.7,
+      "reviews": 265,
+      "deliveryTime": "20-35 min",
+      "deliveryFee": 1.20,
+      "minOrder": 6.00,
+      "promo": "Buy 2 Get 1",
+      "featured": true,
+      "tags": ["Chicken", "Burgers", "Fries"],
+      "address": "Madina, Accra",
+      "menu": [
+        { "id": "m15", "category": "Chicken", "name": "Crispy Fried Chicken Meal", "desc": "2 pieces of crispy chicken with fries and a drink.", "price": 8.50, "image": "https://images.unsplash.com/photo-1561651823-34feb02250e4?w=300&q=80" },
+        { "id": "m16", "category": "Burgers", "name": "Chicken Burger", "desc": "Juicy chicken patty with lettuce and mayo.", "price": 5.50, "image": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=300&q=80" },
+        { "id": "m17", "category": "Sides", "name": "Yam Chips", "desc": "Crispy fried yam chips.", "price": 4.00, "image": "https://images.unsplash.com/photo-1630431341973-02e1b662ec35?w=300&q=80" }
+      ]
+    }
+  ],
+  "promos": [
+    { "id": "p1", "tag": "Ghana Month", "title": "Get 20% off all Local Dishes", "subtitle": "Use code GH20 at checkout", "bg": "linear-gradient(135deg, #ff5a1f 0%, #e53935 100%)", "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80" },
+    { "id": "p2", "tag": "Free Delivery", "title": "Free delivery in East Legon", "subtitle": "Every weekend, all restaurants", "bg": "linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)", "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80" }
+  ],
+  "categories": [
+    { "id": "cat1", "name": "Local", "icon": "🍲", "filter": "Ghanaian" },
+    { "id": "cat2", "name": "Rice", "icon": "🍚", "filter": "Rice" },
+    { "id": "cat3", "name": "Chicken", "icon": "🍗", "filter": "Fried Chicken" },
+    { "id": "cat4", "name": "Grills", "icon": "🥩", "filter": "Grills" },
+    { "id": "cat5", "name": "Street Food", "icon": "🍢", "filter": "Street Food" },
+    { "id": "cat7", "name": "Drinks", "icon": "🥤", "filter": "Drinks" }
+  ]
+}
