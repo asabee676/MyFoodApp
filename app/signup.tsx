@@ -21,6 +21,7 @@ export default function SignupScreen() {
     // IMPORTANT: In production, you would add your real Client IDs here
     iosClientId: 'YOUR_IOS_CLIENT_ID.apps.googleusercontent.com',
     androidClientId: 'YOUR_ANDROID_CLIENT_ID.apps.googleusercontent.com',
+    webClientId: 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com',
   });
 
   useEffect(() => {
