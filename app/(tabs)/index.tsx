@@ -135,7 +135,7 @@ export default function HomeScreen() {
             ))
           ) : (
             <Text style={{ textAlign: 'center', color: colors.textSecondary, marginTop: 20 }}>
-              {t('no_results')} "{searchQuery}"
+              {t('no_results')} &quot;{searchQuery}&quot;
             </Text>
           )}
         </View>

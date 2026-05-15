@@ -296,25 +296,39 @@ const resources = {
   }
 };
 
-const initI18n = async () => {
-  let savedLanguage = await AsyncStorage.getItem('user-language');
-  
-  if (!savedLanguage) {
-    savedLanguage = Localization.locale.split('-')[0];
-  }
+// Initialize i18n synchronously first
+i18n
+  .use(initReactI18next)
+  .init({
+    resources,
+    lng: 'en',
+    fallbackLng: 'en',
+    interpolation: {
+      escapeValue: false
+    }
+  });
 
-  i18n
-    .use(initReactI18next)
-    .init({
-      resources,
-      lng: savedLanguage || 'en',
-      fallbackLng: 'en',
-      interpolation: {
-        escapeValue: false
+// Then handle async language loading in the background
+const loadSavedLanguage = async () => {
+  try {
+    const savedLanguage = await AsyncStorage.getItem('user-language');
+    if (savedLanguage) {
+      await i18n.changeLanguage(savedLanguage);
+    } else {
+      try {
+        const locales = Localization.getLocales();
+        if (locales && locales.length > 0 && locales[0].languageCode) {
+          await i18n.changeLanguage(locales[0].languageCode);
+        }
+      } catch (e) {
+        // Fallback to 'en' already set
       }
-    });
+    }
+  } catch (error) {
+    console.error('Failed to load saved language:', error);
+  }
 };
 
-initI18n();
+loadSavedLanguage();
 
 export default i18n;

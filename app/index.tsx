@@ -20,10 +20,10 @@ export default function WelcomeScreen() {
         
         <View style={styles.content}>
           <View style={styles.logoContainer}>
-             <View style={styles.logoCircle}>
-                <Text style={styles.logoText}>CD</Text>
-             </View>
-             <Text style={styles.brandName}>ChowDash</Text>
+              <View style={styles.logoCircle}>
+                <Text style={styles.logoText}>KD</Text>
+              </View>
+              <Text style={styles.brandName}>KaleDash</Text>
              <Text style={styles.tagline}>{t('tagline')}</Text>
           </View>
 

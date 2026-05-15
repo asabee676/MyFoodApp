@@ -9,7 +9,7 @@ type LocationContextType = {
 
 const LocationContext = createContext<LocationContextType | undefined>(undefined);
 
-const LOCATION_STORAGE_KEY = '@chowdash_user_location';
+const LOCATION_STORAGE_KEY = '@kaledash_user_location';
 const DEFAULT_LOCATION = 'East Legon, Accra';
 
 export function LocationProvider({ children }: { children: React.ReactNode }) {

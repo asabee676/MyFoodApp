@@ -10,7 +10,7 @@ import { ThemeProvider as CustomThemeProvider, useTheme } from '../context/Theme
 import '../i18n'; // Import i18n setup
 
 export const unstable_settings = {
-  initialRouteName: 'index',
+  initialRouteName: 'signup',
 };
 
 function RootLayoutContent() {
