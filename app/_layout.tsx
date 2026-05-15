@@ -1,21 +1,23 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { CartProvider } from '@/context/CartContext';
-import { LocationProvider } from '@/context/LocationContext';
+import { CartProvider } from '../context/CartContext';
+import { LocationProvider } from '../context/LocationContext';
+import { ThemeProvider as CustomThemeProvider, useTheme } from '../context/ThemeContext';
+import '../i18n'; // Import i18n setup
 
 export const unstable_settings = {
   initialRouteName: 'index',
 };
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+function RootLayoutContent() {
+  const { isDark, colors } = useTheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
       <LocationProvider>
         <CartProvider>
           <Stack>
@@ -26,10 +28,19 @@ export default function RootLayout() {
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="login" options={{ headerShown: false }} />
             <Stack.Screen name="signup" options={{ headerShown: false }} />
+            <Stack.Screen name="restaurant-dashboard" options={{ headerShown: false }} />
           </Stack>
-          <StatusBar style="auto" />
+          <StatusBar style={isDark ? "light" : "dark"} />
         </CartProvider>
       </LocationProvider>
     </ThemeProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <CustomThemeProvider>
+      <RootLayoutContent />
+    </CustomThemeProvider>
   );
 }

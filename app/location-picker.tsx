@@ -4,10 +4,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import * as Location from 'expo-location';
 import { useLocation } from '../context/LocationContext';
+import { useTheme } from '../context/ThemeContext';
+import { useTranslation } from 'react-i18next';
 
 export default function LocationPickerScreen() {
   const router = useRouter();
   const { location, setLocation } = useLocation();
+  const { colors, isDark } = useTheme();
+  const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState('');
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
 
@@ -23,7 +27,6 @@ export default function LocationPickerScreen() {
 
       let currentLocation = await Location.getCurrentPositionAsync({});
       
-      // Reverse geocode to get a readable address
       let reverseGeocode = await Location.reverseGeocodeAsync({
         latitude: currentLocation.coords.latitude,
         longitude: currentLocation.coords.longitude,
@@ -31,7 +34,6 @@ export default function LocationPickerScreen() {
 
       if (reverseGeocode.length > 0) {
         const addressObj = reverseGeocode[0];
-        // Construct a readable string
         const street = addressObj.street || addressObj.name;
         const city = addressObj.city || addressObj.region;
         
@@ -62,24 +64,24 @@ export default function LocationPickerScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.closeBtn}>
-          <Ionicons name="close" size={24} color="#333" />
+          <Ionicons name="close" size={24} color={colors.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Delivery Address</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>{t('delivery_address')}</Text>
         <View style={{ width: 24 }} />
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.currentLocationLabel}>CURRENT SAVED LOCATION</Text>
-        <View style={styles.currentLocationBox}>
-          <Ionicons name="location" size={20} color="#E53935" />
-          <Text style={styles.currentLocationText}>{location}</Text>
+        <Text style={[styles.currentLocationLabel, { color: colors.textSecondary }]}>{t('current_saved_location')}</Text>
+        <View style={[styles.currentLocationBox, { backgroundColor: colors.card }]}>
+          <Ionicons name="location" size={20} color={colors.primary} />
+          <Text style={[styles.currentLocationText, { color: colors.text }]}>{location}</Text>
         </View>
 
         <TouchableOpacity 
-          style={styles.gpsBtn} 
+          style={[styles.gpsBtn, { backgroundColor: colors.primary }]} 
           onPress={handleGetCurrentLocation}
           disabled={isFetchingLocation}
         >
@@ -88,32 +90,32 @@ export default function LocationPickerScreen() {
           ) : (
             <>
               <Ionicons name="navigate" size={20} color="#FFF" />
-              <Text style={styles.gpsBtnText}>Use Current Location</Text>
+              <Text style={styles.gpsBtnText}>{t('use_current_location')}</Text>
             </>
           )}
         </TouchableOpacity>
 
         <View style={styles.dividerContainer}>
-          <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>OR</Text>
-          <View style={styles.dividerLine} />
+          <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
+          <Text style={[styles.dividerText, { color: colors.textSecondary }]}>{t('or')}</Text>
+          <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
         </View>
 
-        <Text style={styles.inputLabel}>Enter a new address manually</Text>
-        <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color="#999" style={styles.searchIcon} />
+        <Text style={[styles.inputLabel, { color: colors.text }]}>{t('enter_new_address')}</Text>
+        <View style={[styles.searchContainer, { backgroundColor: colors.card }]}>
+          <Ionicons name="search" size={20} color={colors.textSecondary} style={styles.searchIcon} />
           <TextInput 
-            placeholder="Search for a street, city, or landmark" 
-            style={styles.searchInput}
-            placeholderTextColor="#999"
+            placeholder={t('search_address_placeholder')}
+            style={[styles.searchInput, { color: colors.text }]}
+            placeholderTextColor={colors.textSecondary}
             value={searchInput}
             onChangeText={setSearchInput}
           />
         </View>
         
         {searchInput.trim().length > 0 && (
-          <TouchableOpacity style={styles.saveBtn} onPress={handleSaveCustomLocation}>
-            <Text style={styles.saveBtnText}>Save Address</Text>
+          <TouchableOpacity style={[styles.saveBtn, { backgroundColor: colors.text }]} onPress={handleSaveCustomLocation}>
+            <Text style={[styles.saveBtnText, { color: colors.background }]}>{t('save_address')}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -124,7 +126,6 @@ export default function LocationPickerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
   },
   header: {
     flexDirection: 'row',
@@ -133,9 +134,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: Platform.OS === 'android' ? 40 : 20,
     paddingBottom: 15,
-    backgroundColor: '#FFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#EEE',
   },
   closeBtn: {
     padding: 5,
@@ -143,7 +142,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
   },
   content: {
     padding: 20,
@@ -151,14 +149,12 @@ const styles = StyleSheet.create({
   currentLocationLabel: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#888',
     marginBottom: 8,
     letterSpacing: 0.5,
   },
   currentLocationBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFF',
     padding: 15,
     borderRadius: 12,
     marginBottom: 25,
@@ -170,7 +166,6 @@ const styles = StyleSheet.create({
   },
   currentLocationText: {
     fontSize: 16,
-    color: '#333',
     fontWeight: '500',
     marginLeft: 10,
     flex: 1,
@@ -179,7 +174,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#E53935',
     paddingVertical: 15,
     borderRadius: 12,
   },
@@ -197,23 +191,19 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#DDD',
   },
   dividerText: {
     marginHorizontal: 15,
-    color: '#888',
     fontWeight: 'bold',
   },
   inputLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#555',
     marginBottom: 10,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFF',
     borderRadius: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -230,17 +220,14 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 15,
     fontSize: 16,
-    color: '#333',
   },
   saveBtn: {
-    backgroundColor: '#333',
     paddingVertical: 15,
     borderRadius: 12,
     alignItems: 'center',
     marginTop: 20,
   },
   saveBtnText: {
-    color: '#FFF',
     fontWeight: 'bold',
     fontSize: 16,
   },

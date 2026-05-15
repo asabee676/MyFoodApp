@@ -3,11 +3,30 @@ import { View, Text, StyleSheet, SafeAreaView, ScrollView, Image, TouchableOpaci
 import { Ionicons } from '@expo/vector-icons';
 import { useLocation } from '../../context/LocationContext';
 import { useRouter } from 'expo-router';
+import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from 'react-i18next';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ProfileScreen() {
   const router = useRouter();
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
   const { location } = useLocation();
+  const { theme, setTheme, colors, isDark } = useTheme();
+  const { t, i18n } = useTranslation();
+
+  const toggleLanguage = async () => {
+    const nextLang = i18n.language === 'en' ? 'fr' : i18n.language === 'fr' ? 'tw' : 'en';
+    await i18n.changeLanguage(nextLang);
+    await AsyncStorage.setItem('user-language', nextLang);
+  };
+
+  const getLanguageName = () => {
+    switch(i18n.language) {
+      case 'fr': return 'Français';
+      case 'tw': return 'Twi (Ghana)';
+      default: return 'English';
+    }
+  };
 
   const renderSettingItem = (icon: any, title: string, subtitle?: string, hasSwitch?: boolean, value?: boolean, onValueChange?: (val: boolean) => void) => (
     <TouchableOpacity style={styles.settingItem} disabled={hasSwitch}>
@@ -32,73 +51,115 @@ export default function ProfileScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Profile</Text>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.surface }]}>
+      <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>{t('profile')}</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* Profile Card */}
-        <View style={styles.profileCard}>
+        <View style={[styles.profileCard, { backgroundColor: colors.card }]}>
           <Image source={{ uri: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Abel' }} style={styles.profileAvatar} />
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>Abel</Text>
-            <Text style={styles.profileEmail}>abel@example.com</Text>
-            <TouchableOpacity style={styles.editProfileBtn}>
-              <Text style={styles.editProfileText}>Edit Profile</Text>
+            <Text style={[styles.profileName, { color: colors.text }]}>Abel</Text>
+            <Text style={[styles.profileEmail, { color: colors.textSecondary }]}>abel@example.com</Text>
+            <TouchableOpacity style={[styles.editProfileBtn, { backgroundColor: isDark ? '#333' : '#FBE8E8' }]}>
+              <Text style={[styles.editProfileText, { color: colors.primary }]}>{t('edit_profile')}</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Stats Row */}
-        <View style={styles.statsRow}>
+        <View style={[styles.statsRow, { backgroundColor: colors.card }]}>
           <View style={styles.statBox}>
-            <Text style={styles.statNumber}>12</Text>
-            <Text style={styles.statLabel}>Orders</Text>
+            <Text style={[styles.statNumber, { color: colors.text }]}>12</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('orders')}</Text>
           </View>
-          <View style={styles.statDivider} />
+          <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
           <View style={styles.statBox}>
-            <Text style={styles.statNumber}>4</Text>
-            <Text style={styles.statLabel}>Favorites</Text>
+            <Text style={[styles.statNumber, { color: colors.text }]}>4</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('favorites')}</Text>
           </View>
-          <View style={styles.statDivider} />
+          <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
           <View style={styles.statBox}>
-            <Text style={styles.statNumber}>₵150</Text>
-            <Text style={styles.statLabel}>Wallet</Text>
+            <Text style={[styles.statNumber, { color: colors.text }]}>₵150</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('wallet')}</Text>
           </View>
         </View>
 
         {/* Settings Sections */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>My Account</Text>
-          <View style={styles.sectionCard}>
-            {renderSettingItem('location-outline', 'Delivery Addresses', location)}
-            {renderSettingItem('card-outline', 'Payment Methods', 'Visa ending in 4242')}
-            {renderSettingItem('heart-outline', 'Favorite Restaurants')}
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('merchants')}</Text>
+          <View style={[styles.sectionCard, { backgroundColor: colors.card }]}>
+            <TouchableOpacity style={[styles.settingItem, { borderBottomColor: colors.border }]} onPress={() => router.push('/restaurant-dashboard')}>
+              <View style={[styles.settingIconContainer, { backgroundColor: isDark ? '#333' : '#FBE8E8' }]}>
+                <Ionicons name="business-outline" size={22} color={colors.text} />
+              </View>
+              <View style={styles.settingTextContainer}>
+                <Text style={[styles.settingTitle, { color: colors.text }]}>{t('merchant_dashboard')}</Text>
+                <Text style={[styles.settingSubtitle, { color: colors.textSecondary }]}>{t('manage_orders_menus')}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.tabIconDefault} />
+            </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>App Settings</Text>
-          <View style={styles.sectionCard}>
-            {renderSettingItem('notifications-outline', 'Push Notifications', undefined, true, notificationsEnabled, setNotificationsEnabled)}
-            {renderSettingItem('moon-outline', 'Dark Mode', 'System Default')}
-            {renderSettingItem('globe-outline', 'Language', 'English (US)')}
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('my_account')}</Text>
+          <View style={[styles.sectionCard, { backgroundColor: colors.card }]}>
+            <TouchableOpacity style={[styles.settingItem, { borderBottomColor: colors.border }]}>
+               <View style={[styles.settingIconContainer, { backgroundColor: isDark ? '#333' : '#FBE8E8' }]}>
+                <Ionicons name="location-outline" size={22} color={colors.primary} />
+              </View>
+              <View style={styles.settingTextContainer}>
+                <Text style={[styles.settingTitle, { color: colors.text }]}>{t('delivery_addresses')}</Text>
+                <Text style={[styles.settingSubtitle, { color: colors.textSecondary }]}>{location}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.tabIconDefault} />
+            </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>More</Text>
-          <View style={styles.sectionCard}>
-            {renderSettingItem('help-circle-outline', 'Help & Support')}
-            {renderSettingItem('information-circle-outline', 'About ChowDash')}
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('app_settings')}</Text>
+          <View style={[styles.sectionCard, { backgroundColor: colors.card }]}>
+            {/* Dark Mode Toggle */}
+            <View style={[styles.settingItem, { borderBottomColor: colors.border }]}>
+              <View style={[styles.settingIconContainer, { backgroundColor: isDark ? '#333' : '#FBE8E8' }]}>
+                <Ionicons name={isDark ? "moon" : "moon-outline"} size={22} color={colors.primary} />
+              </View>
+              <View style={styles.settingTextContainer}>
+                <Text style={[styles.settingTitle, { color: colors.text }]}>{t('dark_mode')}</Text>
+              </View>
+              <Switch
+                trackColor={{ false: '#767577', true: '#EF9A9A' }}
+                thumbColor={isDark ? colors.primary : '#f4f3f4'}
+                onValueChange={(val) => setTheme(val ? 'dark' : 'light')}
+                value={isDark}
+              />
+            </View>
+
+            {/* Language Toggle */}
+            <TouchableOpacity 
+              style={[styles.settingItem, { borderBottomColor: colors.border }]} 
+              onPress={toggleLanguage}
+            >
+              <View style={[styles.settingIconContainer, { backgroundColor: isDark ? '#333' : '#FBE8E8' }]}>
+                <Ionicons name="globe-outline" size={22} color={colors.primary} />
+              </View>
+              <View style={styles.settingTextContainer}>
+                <Text style={[styles.settingTitle, { color: colors.text }]}>{t('language')}</Text>
+                <Text style={[styles.settingSubtitle, { color: colors.textSecondary }]}>{getLanguageName()}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.tabIconDefault} />
+            </TouchableOpacity>
           </View>
         </View>
 
         {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutBtn} onPress={() => router.replace('/')}>
-          <Ionicons name="log-out-outline" size={22} color="#E53935" />
-          <Text style={styles.logoutText}>Log Out / Sign In</Text>
+        <TouchableOpacity style={[styles.logoutBtn, { backgroundColor: isDark ? '#333' : '#FBE8E8' }]} onPress={() => router.replace('/')}>
+          <Ionicons name="log-out-outline" size={22} color={colors.primary} />
+          <Text style={[styles.logoutText, { color: colors.primary }]}>{t('logout')}</Text>
         </TouchableOpacity>
 
         <Text style={styles.versionText}>Version 1.0.0</Text>

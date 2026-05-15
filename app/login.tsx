@@ -5,11 +5,15 @@ import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
 import * as AppleAuthentication from 'expo-apple-authentication';
+import { useTheme } from '../context/ThemeContext';
+import { useTranslation } from 'react-i18next';
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { colors, isDark } = useTheme();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -75,29 +79,30 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={24} color="#333" />
+            <Ionicons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
 
           <View style={styles.headerContainer}>
-            <Text style={styles.title}>Welcome Back!</Text>
-            <Text style={styles.subtitle}>Log in to your account to continue</Text>
+            <Text style={[styles.title, { color: colors.text }]}>{t('welcome_back')}</Text>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>{t('login_to_continue')}</Text>
           </View>
 
           <View style={styles.formContainer}>
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Email Address</Text>
-              <View style={styles.inputContainer}>
-                <Ionicons name="mail-outline" size={20} color="#999" style={styles.inputIcon} />
+              <Text style={[styles.label, { color: colors.text }]}>{t('email')}</Text>
+              <View style={[styles.inputContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                <Ionicons name="mail-outline" size={20} color={colors.textSecondary} style={styles.inputIcon} />
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, { color: colors.text }]}
                   placeholder="hello@example.com"
+                  placeholderTextColor={colors.textSecondary}
                   value={email}
                   onChangeText={setEmail}
                   keyboardType="email-address"
@@ -107,67 +112,68 @@ export default function LoginScreen() {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Password</Text>
-              <View style={styles.inputContainer}>
-                <Ionicons name="lock-closed-outline" size={20} color="#999" style={styles.inputIcon} />
+              <Text style={[styles.label, { color: colors.text }]}>{t('password')}</Text>
+              <View style={[styles.inputContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                <Ionicons name="lock-closed-outline" size={20} color={colors.textSecondary} style={styles.inputIcon} />
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, { color: colors.text }]}
                   placeholder="••••••••"
+                  placeholderTextColor={colors.textSecondary}
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry
                 />
               </View>
               <TouchableOpacity style={styles.forgotBtn}>
-                <Text style={styles.forgotText}>Forgot Password?</Text>
+                <Text style={[styles.forgotText, { color: colors.primary }]}>{t('forgot_password')}</Text>
               </TouchableOpacity>
             </View>
 
             <TouchableOpacity 
-              style={styles.loginBtn} 
+              style={[styles.loginBtn, { backgroundColor: colors.primary, shadowColor: colors.primary }]} 
               onPress={handleLogin}
               disabled={isLoading}
             >
               {isLoading ? (
                 <ActivityIndicator color="#FFF" />
               ) : (
-                <Text style={styles.loginBtnText}>Log In</Text>
+                <Text style={styles.loginBtnText}>{t('login')}</Text>
               )}
             </TouchableOpacity>
           </View>
 
           <View style={styles.dividerContainer}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>OR</Text>
-            <View style={styles.dividerLine} />
+            <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
+            <Text style={[styles.dividerText, { color: colors.textSecondary }]}>{t('or')}</Text>
+            <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
           </View>
 
           <View style={styles.socialContainer}>
             <TouchableOpacity 
-              style={styles.socialBtn} 
+              style={[styles.socialBtn, { backgroundColor: colors.card, borderColor: colors.border }]} 
               onPress={() => promptAsync()}
               disabled={!request || isLoading}
             >
               <Ionicons name="logo-google" size={20} color="#DB4437" />
-              <Text style={styles.socialBtnText}>Continue with Google</Text>
+              <Text style={[styles.socialBtnText, { color: colors.text }]}>{t('continue_google')}</Text>
             </TouchableOpacity>
 
             {(Platform.OS === 'ios' || isAppleAvailable) && (
               <TouchableOpacity 
-                style={styles.socialBtn} 
+                style={[styles.socialBtn, { backgroundColor: colors.card, borderColor: colors.border }]} 
                 onPress={handleAppleSignIn}
                 disabled={isLoading}
               >
-                <Ionicons name="logo-apple" size={20} color="#000" />
-                <Text style={styles.socialBtnText}>Continue with Apple</Text>
+                <Ionicons name="logo-apple" size={20} color={colors.text} />
+                <Text style={[styles.socialBtnText, { color: colors.text }]}>{t('continue_apple')}</Text>
               </TouchableOpacity>
             )}
           </View>
 
           <View style={styles.footerContainer}>
-            <Text style={styles.footerText}>Don't have an account? </Text>
+            <Text style={[styles.footerText, { color: colors.textSecondary }]}>{t('dont_have_account')}</Text>
             <TouchableOpacity onPress={() => router.push('/signup')}>
-              <Text style={styles.footerLink}>Sign Up</Text>
+              <Text style={[styles.footerLink, { color: colors.primary }]}>{t('sign_up')}</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -179,7 +185,6 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
   },
   scrollContent: {
     padding: 20,
@@ -198,12 +203,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 15,
-    color: '#777',
   },
   formContainer: {
     marginBottom: 30,
@@ -214,15 +217,12 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
     marginBottom: 8,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8F9FA',
     borderWidth: 1,
-    borderColor: '#EFEFEF',
     borderRadius: 12,
     height: 56,
     paddingHorizontal: 15,
@@ -234,25 +234,21 @@ const styles = StyleSheet.create({
     flex: 1,
     height: '100%',
     fontSize: 16,
-    color: '#333',
   },
   forgotBtn: {
     alignSelf: 'flex-end',
     marginTop: 8,
   },
   forgotText: {
-    color: '#E53935',
     fontWeight: '600',
     fontSize: 14,
   },
   loginBtn: {
-    backgroundColor: '#E53935',
     height: 56,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
-    shadowColor: '#E53935',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -271,10 +267,8 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#EFEFEF',
   },
   dividerText: {
-    color: '#999',
     paddingHorizontal: 15,
     fontSize: 13,
     fontWeight: '600',
@@ -289,14 +283,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 56,
     borderWidth: 1,
-    borderColor: '#EFEFEF',
     borderRadius: 12,
-    backgroundColor: '#FFF',
   },
   socialBtnText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#333',
     marginLeft: 10,
   },
   footerContainer: {
@@ -305,11 +296,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   footerText: {
-    color: '#777',
     fontSize: 15,
   },
   footerLink: {
-    color: '#E53935',
     fontSize: 15,
     fontWeight: 'bold',
   },

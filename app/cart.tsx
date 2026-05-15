@@ -4,37 +4,41 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useCart } from '../context/CartContext';
 import { useLocation } from '../context/LocationContext';
+import { useTheme } from '../context/ThemeContext';
+import { useTranslation } from 'react-i18next';
 
 export default function CartScreen() {
   const router = useRouter();
   const { items, updateQuantity, totalItems, totalPrice, clearCart } = useCart();
   const { location } = useLocation();
+  const { colors, isDark } = useTheme();
+  const { t } = useTranslation();
 
-  const deliveryFee = items.length > 0 ? 5.00 : 0; // Simple flat delivery fee for mock
+  const deliveryFee = items.length > 0 ? 5.00 : 0; 
   const total = totalPrice + deliveryFee;
 
   const handleCheckout = () => {
-    alert('Order Placed Successfully! 🎉');
+    alert(t('order_success'));
     clearCart();
-    router.replace('/(tabs)/orders'); // Navigate to orders
+    router.replace('/(tabs)/orders'); 
   };
 
   if (items.length === 0) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
           <TouchableOpacity onPress={() => router.back()} style={styles.closeBtn}>
-            <Ionicons name="close" size={24} color="#333" />
+            <Ionicons name="close" size={24} color={colors.text} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Your Cart</Text>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>{t('your_cart')}</Text>
           <View style={{ width: 24 }} />
         </View>
         <View style={styles.emptyState}>
-          <Ionicons name="cart-outline" size={80} color="#CCC" />
-          <Text style={styles.emptyTitle}>Your cart is empty</Text>
-          <Text style={styles.emptySubtitle}>Looks like you haven't added any delicious food to your cart yet.</Text>
-          <TouchableOpacity style={styles.browseBtn} onPress={() => router.back()}>
-            <Text style={styles.browseBtnText}>Browse Restaurants</Text>
+          <Ionicons name="cart-outline" size={80} color={colors.border} />
+          <Text style={[styles.emptyTitle, { color: colors.text }]}>{t('cart_empty')}</Text>
+          <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>{t('cart_empty_subtitle')}</Text>
+          <TouchableOpacity style={[styles.browseBtn, { backgroundColor: colors.primary }]} onPress={() => router.back()}>
+            <Text style={styles.browseBtnText}>{t('browse_restaurants')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -42,76 +46,76 @@ export default function CartScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.closeBtn}>
-          <Ionicons name="close" size={24} color="#333" />
+          <Ionicons name="close" size={24} color={colors.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Your Cart ({totalItems})</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>{t('your_cart')} ({totalItems})</Text>
         <TouchableOpacity onPress={clearCart}>
-          <Text style={styles.clearText}>Clear</Text>
+          <Text style={[styles.clearText, { color: colors.primary }]}>{t('clear')}</Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        <View style={styles.cartItemsList}>
+        <View style={[styles.cartItemsList, { backgroundColor: colors.card }]}>
           {items.map((item) => (
-            <View key={item.id} style={styles.cartItem}>
+            <View key={item.id} style={[styles.cartItem, { borderBottomColor: colors.border }]}>
               <View style={styles.itemInfo}>
-                <Text style={styles.itemName}>{item.name}</Text>
-                <Text style={styles.itemPrice}>₵{item.price.toFixed(2)}</Text>
+                <Text style={[styles.itemName, { color: colors.text }]}>{item.name}</Text>
+                <Text style={[styles.itemPrice, { color: colors.primary }]}>₵{item.price.toFixed(2)}</Text>
               </View>
 
-              <View style={styles.quantityControls}>
+              <View style={[styles.quantityControls, { backgroundColor: isDark ? '#333' : '#F9F9F9' }]}>
                 <TouchableOpacity
-                  style={styles.qtyBtn}
+                  style={[styles.qtyBtn, { backgroundColor: colors.card }]}
                   onPress={() => updateQuantity(item.id, item.quantity - 1)}
                 >
-                  <Ionicons name={item.quantity === 1 ? "trash-outline" : "remove"} size={16} color={item.quantity === 1 ? "#E53935" : "#333"} />
+                  <Ionicons name={item.quantity === 1 ? "trash-outline" : "remove"} size={16} color={item.quantity === 1 ? colors.primary : colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.qtyText}>{item.quantity}</Text>
+                <Text style={[styles.qtyText, { color: colors.text }]}>{item.quantity}</Text>
                 <TouchableOpacity
-                  style={styles.qtyBtn}
+                  style={[styles.qtyBtn, { backgroundColor: colors.card }]}
                   onPress={() => updateQuantity(item.id, item.quantity + 1)}
                 >
-                  <Ionicons name="add" size={16} color="#333" />
+                  <Ionicons name="add" size={16} color={colors.text} />
                 </TouchableOpacity>
               </View>
             </View>
           ))}
         </View>
 
-        <View style={styles.deliveryInfoBox}>
+        <View style={[styles.deliveryInfoBox, { backgroundColor: colors.card }]}>
           <View style={styles.deliveryRow}>
-            <Ionicons name="time-outline" size={20} color="#666" />
-            <Text style={styles.deliveryText}>Delivery in 20-30 min</Text>
+            <Ionicons name="time-outline" size={20} color={colors.textSecondary} />
+            <Text style={[styles.deliveryText, { color: colors.text }]}>{t('delivery_time_est')}</Text>
           </View>
           <View style={styles.deliveryRow}>
-            <Ionicons name="location-outline" size={20} color="#666" />
-            <Text style={styles.deliveryText}>{location}</Text>
+            <Ionicons name="location-outline" size={20} color={colors.textSecondary} />
+            <Text style={[styles.deliveryText, { color: colors.text }]}>{location}</Text>
           </View>
         </View>
 
-        <View style={styles.summaryContainer}>
-          <Text style={styles.summaryTitle}>Order Summary</Text>
+        <View style={[styles.summaryContainer, { backgroundColor: colors.card }]}>
+          <Text style={[styles.summaryTitle, { color: colors.text }]}>{t('order_summary')}</Text>
           <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Subtotal</Text>
-            <Text style={styles.summaryValue}>₵{totalPrice.toFixed(2)}</Text>
+            <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>{t('subtotal')}</Text>
+            <Text style={[styles.summaryValue, { color: colors.text }]}>₵{totalPrice.toFixed(2)}</Text>
           </View>
           <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Delivery Fee</Text>
-            <Text style={styles.summaryValue}>₵{deliveryFee.toFixed(2)}</Text>
+            <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>{t('delivery_fee')}</Text>
+            <Text style={[styles.summaryValue, { color: colors.text }]}>₵{deliveryFee.toFixed(2)}</Text>
           </View>
-          <View style={[styles.summaryRow, styles.totalRow]}>
-            <Text style={styles.totalLabel}>Total</Text>
-            <Text style={styles.totalValue}>₵{total.toFixed(2)}</Text>
+          <View style={[styles.summaryRow, styles.totalRow, { borderTopColor: colors.border }]}>
+            <Text style={[styles.totalLabel, { color: colors.text }]}>{t('total')}</Text>
+            <Text style={[styles.totalValue, { color: colors.primary }]}>₵{total.toFixed(2)}</Text>
           </View>
         </View>
       </ScrollView>
 
-      <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.checkoutBtn} onPress={handleCheckout}>
-          <Text style={styles.checkoutBtnText}>Checkout • ₵{total.toFixed(2)}</Text>
+      <View style={[styles.bottomBar, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
+        <TouchableOpacity style={[styles.checkoutBtn, { backgroundColor: colors.primary }]} onPress={handleCheckout}>
+          <Text style={styles.checkoutBtnText}>{t('checkout')} • ₵{total.toFixed(2)}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -121,7 +125,6 @@ export default function CartScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
   },
   header: {
     flexDirection: 'row',
@@ -130,9 +133,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: Platform.OS === 'android' ? 40 : 20,
     paddingBottom: 15,
-    backgroundColor: '#FFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#EEE',
   },
   closeBtn: {
     padding: 5,
@@ -140,10 +141,8 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
   },
   clearText: {
-    color: '#E53935',
     fontWeight: '600',
   },
   emptyState: {
@@ -155,19 +154,16 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
     marginTop: 20,
     marginBottom: 10,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: '#777',
     textAlign: 'center',
     marginBottom: 30,
     lineHeight: 20,
   },
   browseBtn: {
-    backgroundColor: '#E53935',
     paddingHorizontal: 30,
     paddingVertical: 15,
     borderRadius: 25,
@@ -182,7 +178,6 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   cartItemsList: {
-    backgroundColor: '#FFF',
     borderRadius: 16,
     padding: 15,
     marginBottom: 20,
@@ -198,7 +193,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
   },
   itemInfo: {
     flex: 1,
@@ -207,18 +201,15 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
     marginBottom: 5,
   },
   itemPrice: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#E53935',
   },
   quantityControls: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F9F9F9',
     borderRadius: 20,
     paddingHorizontal: 5,
     paddingVertical: 5,
@@ -228,7 +219,6 @@ const styles = StyleSheet.create({
     height: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFF',
     borderRadius: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -242,7 +232,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
   },
   deliveryInfoBox: {
-    backgroundColor: '#FFF',
     borderRadius: 16,
     padding: 15,
     marginBottom: 20,
@@ -259,12 +248,10 @@ const styles = StyleSheet.create({
   },
   deliveryText: {
     fontSize: 15,
-    color: '#444',
     marginLeft: 10,
     fontWeight: '500',
   },
   summaryContainer: {
-    backgroundColor: '#FFF',
     borderRadius: 16,
     padding: 20,
     marginBottom: 20,
@@ -277,7 +264,6 @@ const styles = StyleSheet.create({
   summaryTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 15,
   },
   summaryRow: {
@@ -287,40 +273,33 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     fontSize: 15,
-    color: '#666',
   },
   summaryValue: {
     fontSize: 15,
-    color: '#333',
     fontWeight: '500',
   },
   totalRow: {
     marginTop: 10,
     paddingTop: 15,
     borderTopWidth: 1,
-    borderTopColor: '#EEE',
   },
   totalLabel: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
   },
   totalValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#E53935',
   },
   bottomBar: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#FFF',
     paddingHorizontal: 20,
     paddingVertical: 15,
     paddingBottom: Platform.OS === 'ios' ? 30 : 15,
     borderTopWidth: 1,
-    borderTopColor: '#EEE',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -3 },
     shadowOpacity: 0.1,
@@ -328,7 +307,6 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   checkoutBtn: {
-    backgroundColor: '#E53935',
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',

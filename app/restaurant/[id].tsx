@@ -4,36 +4,40 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import data from '../../data/sample-restaurants.json';
 import { useCart } from '../../context/CartContext';
+import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from 'react-i18next';
 
 export default function RestaurantScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const { addToCart, totalItems, totalPrice } = useCart();
+  const { colors, isDark } = useTheme();
+  const { t } = useTranslation();
   
   const restaurant = data.restaurants.find((r: any) => r.id === id);
 
   if (!restaurant) {
     return (
-      <View style={styles.errorContainer}>
-        <Text>Restaurant not found.</Text>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtnError}>
-          <Text style={{color: '#FFF'}}>Go Back</Text>
+      <View style={[styles.errorContainer, { backgroundColor: colors.background }]}>
+        <Text style={{ color: colors.text }}>{t('restaurant_not_found')}</Text>
+        <TouchableOpacity onPress={() => router.back()} style={[styles.backBtnError, { backgroundColor: colors.primary }]}>
+          <Text style={{color: '#FFF'}}>{t('go_back')}</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
   const renderMenuItem = (item: any) => (
-    <View key={item.id} style={styles.menuItem}>
+    <View key={item.id} style={[styles.menuItem, { backgroundColor: colors.card }]}>
       <View style={styles.menuItemInfo}>
-        <Text style={styles.menuItemName}>{item.name}</Text>
-        <Text style={styles.menuItemDesc} numberOfLines={2}>{item.desc}</Text>
-        <Text style={styles.menuItemPrice}>₵{item.price.toFixed(2)}</Text>
+        <Text style={[styles.menuItemName, { color: colors.text }]}>{item.name}</Text>
+        <Text style={[styles.menuItemDesc, { color: colors.textSecondary }]} numberOfLines={2}>{item.desc}</Text>
+        <Text style={[styles.menuItemPrice, { color: colors.primary }]}>₵{item.price.toFixed(2)}</Text>
       </View>
       <View style={styles.menuItemImageContainer}>
         <Image source={{ uri: item.image }} style={styles.menuItemImage} />
         <TouchableOpacity 
-          style={styles.addButton}
+          style={[styles.addButton, { backgroundColor: colors.primary, borderColor: colors.card }]}
           onPress={() => addToCart(item, restaurant.id)}
         >
           <Ionicons name="add" size={20} color="#FFF" />
@@ -42,7 +46,6 @@ export default function RestaurantScreen() {
     </View>
   );
 
-  // Group menu by category
   const menuByCategory = restaurant.menu.reduce((acc: any, item: any) => {
     if (!acc[item.category]) {
       acc[item.category] = [];
@@ -52,36 +55,36 @@ export default function RestaurantScreen() {
   }, {});
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
         <View style={styles.coverImageContainer}>
           <Image source={{ uri: restaurant.image }} style={styles.coverImage} />
           <View style={styles.headerControls}>
-            <TouchableOpacity style={styles.iconBtn} onPress={() => router.back()}>
-              <Ionicons name="arrow-back" size={24} color="#333" />
+            <TouchableOpacity style={[styles.iconBtn, { backgroundColor: colors.card }]} onPress={() => router.back()}>
+              <Ionicons name="arrow-back" size={24} color={colors.text} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.iconBtn}>
-              <Ionicons name="heart-outline" size={24} color="#333" />
+            <TouchableOpacity style={[styles.iconBtn, { backgroundColor: colors.card }]}>
+              <Ionicons name="heart-outline" size={24} color={colors.text} />
             </TouchableOpacity>
           </View>
         </View>
 
-        <View style={styles.infoContainer}>
-          <Text style={styles.title}>{restaurant.name}</Text>
-          <Text style={styles.tags}>{restaurant.tags.join(' • ')}</Text>
+        <View style={[styles.infoContainer, { backgroundColor: colors.card }]}>
+          <Text style={[styles.title, { color: colors.text }]}>{restaurant.name}</Text>
+          <Text style={[styles.tags, { color: colors.textSecondary }]}>{restaurant.tags.join(' • ')}</Text>
           
-          <View style={styles.statsRow}>
+          <View style={[styles.statsRow, { borderTopColor: colors.border }]}>
             <View style={styles.statItem}>
               <Ionicons name="star" size={18} color="#FFD700" />
-              <Text style={styles.statText}><Text style={{fontWeight: 'bold'}}>{restaurant.rating}</Text> ({restaurant.reviews})</Text>
+              <Text style={[styles.statText, { color: colors.text }]}><Text style={{fontWeight: 'bold'}}>{restaurant.rating}</Text> ({restaurant.reviews})</Text>
             </View>
             <View style={styles.statItem}>
-              <Ionicons name="time-outline" size={18} color="#666" />
-              <Text style={styles.statText}>{restaurant.deliveryTime}</Text>
+              <Ionicons name="time-outline" size={18} color={colors.textSecondary} />
+              <Text style={[styles.statText, { color: colors.text }]}>{restaurant.deliveryTime}</Text>
             </View>
             <View style={styles.statItem}>
-              <Ionicons name="bicycle-outline" size={18} color="#666" />
-              <Text style={styles.statText}>₵{restaurant.deliveryFee.toFixed(2)}</Text>
+              <Ionicons name="bicycle-outline" size={18} color={colors.textSecondary} />
+              <Text style={[styles.statText, { color: colors.text }]}>₵{restaurant.deliveryFee.toFixed(2)}</Text>
             </View>
           </View>
         </View>
@@ -89,19 +92,18 @@ export default function RestaurantScreen() {
         <View style={styles.menuContainer}>
           {Object.keys(menuByCategory).map(category => (
             <View key={category} style={styles.categorySection}>
-              <Text style={styles.categoryTitle}>{category}</Text>
+              <Text style={[styles.categoryTitle, { color: colors.text }]}>{category}</Text>
               {menuByCategory[category].map((item: any) => renderMenuItem(item))}
             </View>
           ))}
         </View>
       </ScrollView>
 
-      {/* Floating View Cart Button */}
       {totalItems > 0 && (
-        <View style={styles.bottomBar}>
-          <TouchableOpacity style={styles.viewCartBtn} onPress={() => router.push('/cart')}>
+        <View style={[styles.bottomBar, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
+          <TouchableOpacity style={[styles.viewCartBtn, { backgroundColor: colors.primary }]} onPress={() => router.push('/cart')}>
             <View style={styles.cartBadge}><Text style={styles.cartBadgeText}>{totalItems}</Text></View>
-            <Text style={styles.viewCartText}>View Cart</Text>
+            <Text style={styles.viewCartText}>{t('view_cart')}</Text>
             <Text style={styles.viewCartTotal}>₵{totalPrice.toFixed(2)}</Text>
           </TouchableOpacity>
         </View>
@@ -113,7 +115,6 @@ export default function RestaurantScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
   },
   errorContainer: {
     flex: 1,
@@ -122,7 +123,6 @@ const styles = StyleSheet.create({
   },
   backBtnError: {
     marginTop: 20,
-    backgroundColor: '#E53935',
     padding: 10,
     borderRadius: 8,
   },
@@ -146,7 +146,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#FFF',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -156,7 +155,6 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   infoContainer: {
-    backgroundColor: '#FFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     marginTop: -24,
@@ -171,19 +169,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 8,
   },
   tags: {
     fontSize: 14,
-    color: '#666',
     marginBottom: 15,
   },
   statsRow: {
     flexDirection: 'row',
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: '#EEE',
     paddingTop: 15,
   },
   statItem: {
@@ -193,7 +188,6 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: 14,
-    color: '#444',
     marginLeft: 6,
   },
   menuContainer: {
@@ -206,12 +200,10 @@ const styles = StyleSheet.create({
   categoryTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 15,
   },
   menuItem: {
     flexDirection: 'row',
-    backgroundColor: '#FFF',
     padding: 15,
     borderRadius: 16,
     marginBottom: 15,
@@ -228,19 +220,16 @@ const styles = StyleSheet.create({
   menuItemName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 6,
   },
   menuItemDesc: {
     fontSize: 13,
-    color: '#777',
     marginBottom: 10,
     lineHeight: 18,
   },
   menuItemPrice: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#E53935',
   },
   menuItemImageContainer: {
     position: 'relative',
@@ -254,29 +243,29 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -10,
     right: -10,
-    backgroundColor: '#E53935',
     width: 32,
     height: 32,
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#FFF',
   },
   bottomBar: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#FFF',
     paddingHorizontal: 20,
     paddingVertical: 15,
     paddingBottom: Platform.OS === 'ios' ? 30 : 15,
     borderTopWidth: 1,
-    borderTopColor: '#EEE',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 10,
   },
   viewCartBtn: {
-    backgroundColor: '#E53935',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

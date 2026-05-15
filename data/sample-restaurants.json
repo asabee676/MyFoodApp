@@ -80,6 +80,64 @@
         { "id": "m16", "category": "Burgers", "name": "Chicken Burger", "desc": "Juicy chicken patty with lettuce and mayo.", "price": 5.50, "image": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=300&q=80" },
         { "id": "m17", "category": "Sides", "name": "Yam Chips", "desc": "Crispy fried yam chips.", "price": 4.00, "image": "https://images.unsplash.com/photo-1630431341973-02e1b662ec35?w=300&q=80" }
       ]
+    },
+    {
+      "id": "r5",
+      "name": "KFC Ghana",
+      "cuisine": ["Fried Chicken", "Fast Food"],
+      "image": "https://images.unsplash.com/photo-1513639776629-7b61b0ac49cb?w=600&q=80",
+      "rating": 4.8,
+      "reviews": 850,
+      "deliveryTime": "15-25 min",
+      "deliveryFee": 1.50,
+      "minOrder": 10.00,
+      "promo": "FREE KRUSHERS",
+      "featured": true,
+      "tags": ["Streetwise", "Zinger", "Bucket"],
+      "address": "Osu, Accra",
+      "menu": [
+        { "id": "m20", "category": "Meals", "name": "Streetwise 2", "desc": "2 pieces of chicken with regular fries.", "price": 12.00, "image": "https://images.unsplash.com/photo-1562967914-6cbb8241021f?w=300&q=80" },
+        { "id": "m21", "category": "Burgers", "name": "Zinger Burger", "desc": "Classic spicy chicken fillet burger.", "price": 9.50, "image": "https://images.unsplash.com/photo-1521305916504-4a1121188589?w=300&q=80" },
+        { "id": "m22", "category": "Buckets", "name": "9 Piece Bucket", "desc": "The ultimate party bucket of original recipe chicken.", "price": 35.00, "image": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=300&q=80" }
+      ]
+    },
+    {
+      "id": "r6",
+      "name": "Papaye Fast Food",
+      "cuisine": ["Rice Dishes", "Grilled Chicken"],
+      "image": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&q=80",
+      "rating": 4.6,
+      "reviews": 1200,
+      "deliveryTime": "20-40 min",
+      "deliveryFee": 1.20,
+      "minOrder": 8.00,
+      "promo": "LOYALTY DEAL",
+      "featured": true,
+      "tags": ["Fried Rice", "Grilled Chicken", "Ghana Style"],
+      "address": "Spintex, Accra",
+      "menu": [
+        { "id": "m25", "category": "Rice", "name": "Full Chicken + Fried Rice", "desc": "Signature Papaye fried rice with a whole grilled chicken.", "price": 45.00, "image": "https://images.unsplash.com/photo-1606471191009-63994c53433b?w=300&q=80" },
+        { "id": "m26", "category": "Rice", "name": "Quarter Chicken + Fried Rice", "desc": "Ghana's favorite lunch combo.", "price": 14.50, "image": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=300&q=80" }
+      ]
+    },
+    {
+      "id": "r7",
+      "name": "Burger King Ghana",
+      "cuisine": ["Burgers", "Fast Food"],
+      "image": "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&q=80",
+      "rating": 4.7,
+      "reviews": 540,
+      "deliveryTime": "20-30 min",
+      "deliveryFee": 2.00,
+      "minOrder": 12.00,
+      "promo": "WHOPPER DAY",
+      "featured": true,
+      "tags": ["Whopper", "Flame Grilled", "Snacks"],
+      "address": "Airport City, Accra",
+      "menu": [
+        { "id": "m30", "category": "Burgers", "name": "Whopper Meal", "desc": "Flame-grilled beef patty with fries and a drink.", "price": 16.00, "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=80" },
+        { "id": "m31", "category": "Snacks", "name": "Chicken Nuggets (9pcs)", "desc": "Crispy golden chicken nuggets.", "price": 7.00, "image": "https://images.unsplash.com/photo-1562967914-6cbb8241021f?w=300&q=80" }
+      ]
     }
   ],
   "promos": [
@@ -93,5 +151,41 @@
     { "id": "cat4", "name": "Grills", "icon": "🥩", "filter": "Grills" },
     { "id": "cat5", "name": "Street Food", "icon": "🍢", "filter": "Street Food" },
     { "id": "cat7", "name": "Drinks", "icon": "🥤", "filter": "Drinks" }
+  ],
+  "orders": [
+    {
+      "id": "ord1",
+      "restaurant": "The Buka Restaurant",
+      "status": "ongoing",
+      "date": "May 14, 2026 • 12:30 PM",
+      "items": ["Waakye with Assorted Meat", "Sobolo Drink"],
+      "total": 15.00,
+      "estimatedTime": "15 min",
+      "rider": {
+        "name": "Kofi",
+        "vehicle": "Yamaha Motorbike",
+        "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Kofi"
+      }
+    },
+    {
+      "id": "ord2",
+      "restaurant": "KFC Ghana",
+      "status": "delivered",
+      "date": "May 12, 2026 • 7:15 PM",
+      "items": ["Streetwise 2", "Zinger Burger"],
+      "total": 21.50,
+      "estimatedTime": null,
+      "rider": null
+    },
+    {
+      "id": "ord3",
+      "restaurant": "Papaye Fast Food",
+      "status": "delivered",
+      "date": "May 10, 2026 • 1:45 PM",
+      "items": ["Quarter Chicken + Fried Rice"],
+      "total": 14.50,
+      "estimatedTime": null,
+      "rider": null
+    }
   ]
 }

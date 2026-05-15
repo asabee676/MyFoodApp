@@ -4,12 +4,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import data from '../../data/sample-restaurants.json';
 import { useLocation } from '../../context/LocationContext';
+import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from 'react-i18next';
 
 export default function HomeScreen() {
   const router = useRouter();
   const { categories, restaurants, promos } = data;
   const [searchQuery, setSearchQuery] = useState('');
   const { location } = useLocation();
+  const { colors, isDark } = useTheme();
+  const { t } = useTranslation();
 
   // Filter restaurants based on search query
   const filteredRestaurants = restaurants.filter(restaurant => 
@@ -19,50 +23,50 @@ export default function HomeScreen() {
   );
 
   const renderCategory = ({ item }: { item: any }) => (
-    <TouchableOpacity style={styles.categoryCard}>
+    <TouchableOpacity style={[styles.categoryCard, { backgroundColor: colors.card }]}>
       <Text style={styles.categoryIcon}>{item.icon}</Text>
-      <Text style={styles.categoryName}>{item.name}</Text>
+      <Text style={[styles.categoryName, { color: colors.text }]}>{item.name}</Text>
     </TouchableOpacity>
   );
 
   const renderRestaurant = ({ item }: { item: any }) => (
     <TouchableOpacity 
-      style={styles.restaurantCard} 
+      style={[styles.restaurantCard, { backgroundColor: colors.card }]} 
       onPress={() => router.push(`/restaurant/${item.id}`)}
     >
       <Image source={{ uri: item.image }} style={styles.restaurantImage} />
       <View style={styles.restaurantInfo}>
         <View style={styles.restaurantHeader}>
-          <Text style={styles.restaurantName}>{item.name}</Text>
-          <View style={styles.ratingBadge}>
+          <Text style={[styles.restaurantName, { color: colors.text }]}>{item.name}</Text>
+          <View style={[styles.ratingBadge, { backgroundColor: isDark ? '#333' : '#FFF9E6' }]}>
             <Ionicons name="star" size={12} color="#FFD700" />
-            <Text style={styles.ratingText}>{item.rating}</Text>
+            <Text style={[styles.ratingText, { color: isDark ? '#FFD700' : '#B8860B' }]}>{item.rating}</Text>
           </View>
         </View>
-        <Text style={styles.cuisineText}>{item.cuisine.join(' • ')}</Text>
+        <Text style={[styles.cuisineText, { color: colors.textSecondary }]}>{item.cuisine.join(' • ')}</Text>
         <View style={styles.deliveryInfo}>
-          <Ionicons name="time-outline" size={14} color="#666" />
-          <Text style={styles.deliveryText}>{item.deliveryTime}</Text>
-          <Text style={styles.dot}>•</Text>
-          <Ionicons name="bicycle-outline" size={14} color="#666" />
-          <Text style={styles.deliveryText}>${item.deliveryFee.toFixed(2)}</Text>
+          <Ionicons name="time-outline" size={14} color={colors.textSecondary} />
+          <Text style={[styles.deliveryText, { color: colors.textSecondary }]}>{item.deliveryTime}</Text>
+          <Text style={[styles.dot, { color: colors.border }]}>•</Text>
+          <Ionicons name="bicycle-outline" size={14} color={colors.textSecondary} />
+          <Text style={[styles.deliveryText, { color: colors.textSecondary }]}>₵{item.deliveryFee.toFixed(2)}</Text>
         </View>
       </View>
     </TouchableOpacity>
   );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.header}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         <View>
-          <Text style={styles.greeting}>Good morning 👋</Text>
+          <Text style={[styles.greeting, { color: colors.textSecondary }]}>{t('greeting')}</Text>
           <TouchableOpacity style={styles.locationContainer} onPress={() => router.push('/location-picker')}>
-            <Ionicons name="location" size={16} color="#E53935" />
-            <Text style={styles.locationText} numberOfLines={1}>{location}</Text>
-            <Ionicons name="chevron-down" size={16} color="#333" />
+            <Ionicons name="location" size={16} color={colors.primary} />
+            <Text style={[styles.locationText, { color: colors.text }]} numberOfLines={1}>{location}</Text>
+            <Ionicons name="chevron-down" size={16} color={colors.text} />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.profileBtn}>
+        <TouchableOpacity style={styles.profileBtn} onPress={() => router.push('/(tabs)/profile')}>
           <Image source={{ uri: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Abel' }} style={styles.profileImg} />
         </TouchableOpacity>
       </View>
@@ -71,15 +75,15 @@ export default function HomeScreen() {
         
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color="#999" style={styles.searchIcon} />
+          <Ionicons name="search" size={20} color={colors.textSecondary} style={styles.searchIcon} />
           <TextInput 
-            placeholder="What are you craving?" 
-            style={styles.searchInput}
-            placeholderTextColor="#999"
+            placeholder={t('search_craving')} 
+            style={[styles.searchInput, { backgroundColor: colors.card, color: colors.text }]}
+            placeholderTextColor={colors.textSecondary}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
-          <TouchableOpacity style={styles.filterBtn}>
+          <TouchableOpacity style={[styles.filterBtn, { backgroundColor: colors.primary, shadowColor: colors.primary }]}>
             <Ionicons name="options" size={20} color="#FFF" />
           </TouchableOpacity>
         </View>
@@ -89,7 +93,7 @@ export default function HomeScreen() {
           <View style={styles.promoBanner}>
             <Image source={{ uri: promos[0].image }} style={styles.promoImage} />
             <View style={styles.promoOverlay}>
-              <Text style={styles.promoTag}>{promos[0].tag}</Text>
+              <Text style={[styles.promoTag, { backgroundColor: colors.primary }]}>{promos[0].tag}</Text>
               <Text style={styles.promoTitle}>{promos[0].title}</Text>
               <Text style={styles.promoSubtitle}>{promos[0].subtitle}</Text>
             </View>
@@ -100,8 +104,8 @@ export default function HomeScreen() {
         {searchQuery === '' && (
           <>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Categories</Text>
-              <TouchableOpacity><Text style={styles.seeAllText}>See all</Text></TouchableOpacity>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('categories')}</Text>
+              <TouchableOpacity><Text style={[styles.seeAllText, { color: colors.primary }]}>{t('see_all')}</Text></TouchableOpacity>
             </View>
             <FlatList
               data={categories}
@@ -116,10 +120,10 @@ export default function HomeScreen() {
 
         {/* Featured Restaurants / Search Results */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>
-            {searchQuery ? 'Search Results' : 'Featured Restaurants'}
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            {searchQuery ? t('search_results') : t('featured_restaurants')}
           </Text>
-          {!searchQuery && <TouchableOpacity><Text style={styles.seeAllText}>See all</Text></TouchableOpacity>}
+          {!searchQuery && <TouchableOpacity><Text style={[styles.seeAllText, { color: colors.primary }]}>{t('see_all')}</Text></TouchableOpacity>}
         </View>
         
         <View style={styles.restaurantsList}>
@@ -130,8 +134,8 @@ export default function HomeScreen() {
               </React.Fragment>
             ))
           ) : (
-            <Text style={{ textAlign: 'center', color: '#999', marginTop: 20 }}>
-              No restaurants found matching "{searchQuery}"
+            <Text style={{ textAlign: 'center', color: colors.textSecondary, marginTop: 20 }}>
+              {t('no_results')} "{searchQuery}"
             </Text>
           )}
         </View>
@@ -144,7 +148,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
   },
   header: {
     flexDirection: 'row',
@@ -153,11 +156,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: Platform.OS === 'android' ? 40 : 10, 
     paddingBottom: 15,
-    backgroundColor: '#FFF',
+    borderBottomWidth: 1,
   },
   greeting: {
     fontSize: 14,
-    color: '#666',
     marginBottom: 4,
   },
   locationContainer: {
@@ -167,7 +169,6 @@ const styles = StyleSheet.create({
   locationText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
     marginHorizontal: 4,
   },
   profileBtn: {
@@ -198,7 +199,6 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    backgroundColor: '#FFF',
     height: 48,
     borderRadius: 12,
     paddingLeft: 45,
@@ -211,14 +211,12 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   filterBtn: {
-    backgroundColor: '#E53935',
     width: 48,
     height: 48,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 12,
-    shadowColor: '#E53935',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -242,7 +240,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   promoTag: {
-    backgroundColor: '#E53935',
     color: '#FFF',
     alignSelf: 'flex-start',
     paddingHorizontal: 10,
@@ -272,10 +269,8 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
   },
   seeAllText: {
-    color: '#E53935',
     fontWeight: '600',
   },
   categoriesList: {
@@ -285,7 +280,6 @@ const styles = StyleSheet.create({
   categoryCard: {
     alignItems: 'center',
     marginHorizontal: 5,
-    backgroundColor: '#FFF',
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 16,
@@ -302,13 +296,11 @@ const styles = StyleSheet.create({
   categoryName: {
     fontSize: 13,
     fontWeight: '500',
-    color: '#444',
   },
   restaurantsList: {
     paddingHorizontal: 20,
   },
   restaurantCard: {
-    backgroundColor: '#FFF',
     borderRadius: 16,
     marginBottom: 20,
     overflow: 'hidden',
@@ -334,12 +326,10 @@ const styles = StyleSheet.create({
   restaurantName: {
     fontSize: 17,
     fontWeight: 'bold',
-    color: '#333',
   },
   ratingBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFF9E6',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -347,12 +337,10 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#B8860B',
     marginLeft: 4,
   },
   cuisineText: {
     fontSize: 13,
-    color: '#777',
     marginBottom: 10,
   },
   deliveryInfo: {
@@ -361,11 +349,9 @@ const styles = StyleSheet.create({
   },
   deliveryText: {
     fontSize: 13,
-    color: '#666',
     marginLeft: 4,
   },
   dot: {
     marginHorizontal: 8,
-    color: '#CCC',
   },
 });

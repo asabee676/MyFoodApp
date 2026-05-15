@@ -2,9 +2,11 @@ import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useTranslation } from 'react-i18next';
 
 export default function WelcomeScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
@@ -22,7 +24,7 @@ export default function WelcomeScreen() {
                 <Text style={styles.logoText}>CD</Text>
              </View>
              <Text style={styles.brandName}>ChowDash</Text>
-             <Text style={styles.tagline}>The food you love, delivered fast.</Text>
+             <Text style={styles.tagline}>{t('tagline')}</Text>
           </View>
 
           <View style={styles.buttonContainer}>
@@ -30,19 +32,19 @@ export default function WelcomeScreen() {
               style={styles.signupBtn} 
               onPress={() => router.push('/signup')}
             >
-              <Text style={styles.signupText}>Create Account</Text>
+              <Text style={styles.signupText}>{t('create_account')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
               style={styles.loginBtn} 
               onPress={() => router.push('/login')}
             >
-              <Text style={styles.loginText}>Log In</Text>
+              <Text style={styles.loginText}>{t('login')}</Text>
             </TouchableOpacity>
           </View>
 
           <Text style={styles.footerText}>
-            By continuing, you agree to our Terms of Service and Privacy Policy.
+            {t('terms_privacy')}
           </Text>
         </View>
       </ImageBackground>
