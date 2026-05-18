@@ -3,7 +3,10 @@
     {
       "id": "r1",
       "name": "Mama's Kitchen",
-      "cuisine": ["Nigerian", "Local"],
+      "cuisine": [
+        "Nigerian",
+        "Local"
+      ],
       "image": "https://images.unsplash.com/photo-1567521464027-f127ff144326?w=600&q=80",
       "rating": 4.8,
       "reviews": 312,
@@ -12,20 +15,62 @@
       "minOrder": 5.00,
       "promo": "20% OFF",
       "featured": true,
-      "tags": ["Jollof Rice", "Stew", "Soup"],
+      "tags": [
+        "Jollof Rice",
+        "Stew",
+        "Soup"
+      ],
       "address": "12 Ring Road, East Legon",
       "menu": [
-        { "id": "m1", "category": "Rice Dishes", "name": "Jollof Rice + Chicken", "desc": "Perfectly seasoned tomato rice with grilled chicken and fried plantain.", "price": 8.50, "image": "https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=300&q=80" },
-        { "id": "m2", "category": "Rice Dishes", "name": "Fried Rice + Beef", "desc": "Classic fried rice with tender beef stew and coleslaw.", "price": 9.00, "image": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=300&q=80" },
-        { "id": "m3", "category": "Soups", "name": "Egusi Soup + Fufu", "desc": "Rich egusi soup with assorted meat, served with fresh fufu.", "price": 10.00, "image": "https://images.unsplash.com/photo-1574484284002-952d92456975?w=300&q=80" },
-        { "id": "m4", "category": "Soups", "name": "Light Soup + Banku", "desc": "Spicy light soup with tilapia, served with smooth banku.", "price": 9.50, "image": "https://images.unsplash.com/photo-1547592180-85f173990554?w=300&q=80" },
-        { "id": "m5", "category": "Drinks", "name": "Zobo Drink (Large)", "desc": "Chilled hibiscus drink with ginger and pineapple.", "price": 2.50, "image": "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=300&q=80" }
+        {
+          "id": "m1",
+          "category": "Rice Dishes",
+          "name": "Jollof Rice + Chicken",
+          "desc": "Perfectly seasoned tomato rice with grilled chicken and fried plantain.",
+          "price": 8.50,
+          "image": "https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=300&q=80"
+        },
+        {
+          "id": "m2",
+          "category": "Rice Dishes",
+          "name": "Fried Rice + Beef",
+          "desc": "Classic fried rice with tender beef stew and coleslaw.",
+          "price": 9.00,
+          "image": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=300&q=80"
+        },
+        {
+          "id": "m3",
+          "category": "Soups",
+          "name": "Egusi Soup + Fufu",
+          "desc": "Rich egusi soup with assorted meat, served with fresh fufu.",
+          "price": 10.00,
+          "image": "https://images.unsplash.com/photo-1574484284002-952d92456975?w=300&q=80"
+        },
+        {
+          "id": "m4",
+          "category": "Soups",
+          "name": "Light Soup + Banku",
+          "desc": "Spicy light soup with tilapia, served with smooth banku.",
+          "price": 9.50,
+          "image": "https://images.unsplash.com/photo-1547592180-85f173990554?w=300&q=80"
+        },
+        {
+          "id": "m5",
+          "category": "Drinks",
+          "name": "Zobo Drink (Large)",
+          "desc": "Chilled hibiscus drink with ginger and pineapple.",
+          "price": 2.50,
+          "image": "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=300&q=80"
+        }
       ]
     },
     {
       "id": "r2",
       "name": "Fire Grill House",
-      "cuisine": ["BBQ", "Grills"],
+      "cuisine": [
+        "BBQ",
+        "Grills"
+      ],
       "image": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80",
       "rating": 4.6,
       "reviews": 198,
@@ -34,19 +79,54 @@
       "minOrder": 8.00,
       "promo": null,
       "featured": true,
-      "tags": ["Suya", "BBQ", "Chicken"],
+      "tags": [
+        "Suya",
+        "BBQ",
+        "Chicken"
+      ],
       "address": "45 Independence Ave, Accra",
       "menu": [
-        { "id": "m6", "category": "Grills", "name": "Suya Beef Skewers", "desc": "Tender beef skewers marinated in aromatic suya spice, served with onions and tomatoes.", "price": 11.00, "image": "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=300&q=80" },
-        { "id": "m7", "category": "Grills", "name": "Half Grilled Chicken", "desc": "Charcoal-grilled chicken with pepper sauce and fries.", "price": 13.50, "image": "https://images.unsplash.com/photo-1598514982901-5f93e0d08dc0?w=300&q=80" },
-        { "id": "m8", "category": "Sides", "name": "Crispy Fries", "desc": "Golden fries seasoned with paprika and sea salt.", "price": 3.50, "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=300&q=80" },
-        { "id": "m9", "category": "Drinks", "name": "Chilled Chapman", "desc": "Classic Nigerian Chapman cocktail, refreshing and fruity.", "price": 3.00, "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&q=80" }
+        {
+          "id": "m6",
+          "category": "Grills",
+          "name": "Suya Beef Skewers",
+          "desc": "Tender beef skewers marinated in aromatic suya spice, served with onions and tomatoes.",
+          "price": 11.00,
+          "image": "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=300&q=80"
+        },
+        {
+          "id": "m7",
+          "category": "Grills",
+          "name": "Half Grilled Chicken",
+          "desc": "Charcoal-grilled chicken with pepper sauce and fries.",
+          "price": 13.50,
+          "image": "https://images.unsplash.com/photo-1598514982901-5f93e0d08dc0?w=300&q=80"
+        },
+        {
+          "id": "m8",
+          "category": "Sides",
+          "name": "Crispy Fries",
+          "desc": "Golden fries seasoned with paprika and sea salt.",
+          "price": 3.50,
+          "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=300&q=80"
+        },
+        {
+          "id": "m9",
+          "category": "Drinks",
+          "name": "Chilled Chapman",
+          "desc": "Classic Nigerian Chapman cocktail, refreshing and fruity.",
+          "price": 3.00,
+          "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&q=80"
+        }
       ]
     },
     {
       "id": "r3",
       "name": "Pizza Palace",
-      "cuisine": ["Italian", "Fast Food"],
+      "cuisine": [
+        "Italian",
+        "Fast Food"
+      ],
       "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80",
       "rating": 4.5,
       "reviews": 421,
@@ -55,20 +135,62 @@
       "minOrder": 10.00,
       "promo": "Free Delivery",
       "featured": false,
-      "tags": ["Pizza", "Pasta", "Burgers"],
+      "tags": [
+        "Pizza",
+        "Pasta",
+        "Burgers"
+      ],
       "address": "8 Osu Oxford St, Accra",
       "menu": [
-        { "id": "m10", "category": "Pizzas", "name": "Pepperoni Supreme", "desc": "Loaded pepperoni on housemade tomato sauce with mozzarella.", "price": 15.00, "image": "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=300&q=80" },
-        { "id": "m11", "category": "Pizzas", "name": "BBQ Chicken Pizza", "desc": "Smoky BBQ chicken with red onions, jalapeños and cheddar.", "price": 16.00, "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&q=80" },
-        { "id": "m12", "category": "Burgers", "name": "Double Smash Burger", "desc": "Two smash patties, American cheese, pickles, special sauce.", "price": 12.00, "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=80" },
-        { "id": "m13", "category": "Pasta", "name": "Spaghetti Bolognese", "desc": "Classic beef ragù slow-cooked with herbs, topped with parmesan.", "price": 11.50, "image": "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=300&q=80" },
-        { "id": "m14", "category": "Drinks", "name": "Fresh Lemonade", "desc": "Freshly squeezed lemonade with mint leaves.", "price": 2.50, "image": "https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=300&q=80" }
+        {
+          "id": "m10",
+          "category": "Pizzas",
+          "name": "Pepperoni Supreme",
+          "desc": "Loaded pepperoni on housemade tomato sauce with mozzarella.",
+          "price": 15.00,
+          "image": "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=300&q=80"
+        },
+        {
+          "id": "m11",
+          "category": "Pizzas",
+          "name": "BBQ Chicken Pizza",
+          "desc": "Smoky BBQ chicken with red onions, jalapeños and cheddar.",
+          "price": 16.00,
+          "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&q=80"
+        },
+        {
+          "id": "m12",
+          "category": "Burgers",
+          "name": "Double Smash Burger",
+          "desc": "Two smash patties, American cheese, pickles, special sauce.",
+          "price": 12.00,
+          "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=80"
+        },
+        {
+          "id": "m13",
+          "category": "Pasta",
+          "name": "Spaghetti Bolognese",
+          "desc": "Classic beef ragù slow-cooked with herbs, topped with parmesan.",
+          "price": 11.50,
+          "image": "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=300&q=80"
+        },
+        {
+          "id": "m14",
+          "category": "Drinks",
+          "name": "Fresh Lemonade",
+          "desc": "Freshly squeezed lemonade with mint leaves.",
+          "price": 2.50,
+          "image": "https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=300&q=80"
+        }
       ]
     },
     {
       "id": "r4",
       "name": "Shawarma Zone",
-      "cuisine": ["Middle Eastern", "Wraps"],
+      "cuisine": [
+        "Middle Eastern",
+        "Wraps"
+      ],
       "image": "https://images.unsplash.com/photo-1512152272829-e3139592d56f?w=600&q=80",
       "rating": 4.7,
       "reviews": 265,
@@ -77,19 +199,54 @@
       "minOrder": 6.00,
       "promo": "Buy 2 Get 1",
       "featured": true,
-      "tags": ["Shawarma", "Wraps", "Rolls"],
+      "tags": [
+        "Shawarma",
+        "Wraps",
+        "Rolls"
+      ],
       "address": "22 Cantonments Road, Accra",
       "menu": [
-        { "id": "m15", "category": "Shawarma", "name": "Chicken Shawarma", "desc": "Tender marinated chicken, garlic sauce, pickled veggies in toasted pita.", "price": 7.50, "image": "https://images.unsplash.com/photo-1561651823-34feb02250e4?w=300&q=80" },
-        { "id": "m16", "category": "Shawarma", "name": "Beef Shawarma", "desc": "Juicy beef strips with hummus, tomatoes and parsley in warm flatbread.", "price": 8.50, "image": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=300&q=80" },
-        { "id": "m17", "category": "Sides", "name": "Garlic Fries", "desc": "Crispy fries tossed in garlic butter and parsley.", "price": 4.00, "image": "https://images.unsplash.com/photo-1630431341973-02e1b662ec35?w=300&q=80" },
-        { "id": "m18", "category": "Drinks", "name": "Mango Smoothie", "desc": "Thick blended mango smoothie with yogurt.", "price": 3.50, "image": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=300&q=80" }
+        {
+          "id": "m15",
+          "category": "Shawarma",
+          "name": "Chicken Shawarma",
+          "desc": "Tender marinated chicken, garlic sauce, pickled veggies in toasted pita.",
+          "price": 7.50,
+          "image": "https://images.unsplash.com/photo-1561651823-34feb02250e4?w=300&q=80"
+        },
+        {
+          "id": "m16",
+          "category": "Shawarma",
+          "name": "Beef Shawarma",
+          "desc": "Juicy beef strips with hummus, tomatoes and parsley in warm flatbread.",
+          "price": 8.50,
+          "image": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=300&q=80"
+        },
+        {
+          "id": "m17",
+          "category": "Sides",
+          "name": "Garlic Fries",
+          "desc": "Crispy fries tossed in garlic butter and parsley.",
+          "price": 4.00,
+          "image": "https://images.unsplash.com/photo-1630431341973-02e1b662ec35?w=300&q=80"
+        },
+        {
+          "id": "m18",
+          "category": "Drinks",
+          "name": "Mango Smoothie",
+          "desc": "Thick blended mango smoothie with yogurt.",
+          "price": 3.50,
+          "image": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=300&q=80"
+        }
       ]
     },
     {
       "id": "r5",
       "name": "Burger Republic",
-      "cuisine": ["American", "Fast Food"],
+      "cuisine": [
+        "American",
+        "Fast Food"
+      ],
       "image": "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&q=80",
       "rating": 4.4,
       "reviews": 189,
@@ -98,19 +255,54 @@
       "minOrder": 7.00,
       "promo": null,
       "featured": false,
-      "tags": ["Burgers", "Chicken", "Shakes"],
+      "tags": [
+        "Burgers",
+        "Chicken",
+        "Shakes"
+      ],
       "address": "3 Liberation Road, Accra",
       "menu": [
-        { "id": "m19", "category": "Burgers", "name": "Classic Cheeseburger", "desc": "Beef patty, cheddar cheese, lettuce, tomato, pickles, ketchup.", "price": 9.00, "image": "https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=300&q=80" },
-        { "id": "m20", "category": "Burgers", "name": "Crispy Chicken Burger", "desc": "Crispy fried chicken thigh, slaw, pickles, sriracha mayo.", "price": 10.00, "image": "https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=300&q=80" },
-        { "id": "m21", "category": "Sides", "name": "Onion Rings", "desc": "Crispy beer-battered onion rings with dipping sauce.", "price": 3.50, "image": "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=300&q=80" },
-        { "id": "m22", "category": "Shakes", "name": "Chocolate Milkshake", "desc": "Thick creamy chocolate shake with whipped cream.", "price": 4.50, "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=300&q=80" }
+        {
+          "id": "m19",
+          "category": "Burgers",
+          "name": "Classic Cheeseburger",
+          "desc": "Beef patty, cheddar cheese, lettuce, tomato, pickles, ketchup.",
+          "price": 9.00,
+          "image": "https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=300&q=80"
+        },
+        {
+          "id": "m20",
+          "category": "Burgers",
+          "name": "Crispy Chicken Burger",
+          "desc": "Crispy fried chicken thigh, slaw, pickles, sriracha mayo.",
+          "price": 10.00,
+          "image": "https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=300&q=80"
+        },
+        {
+          "id": "m21",
+          "category": "Sides",
+          "name": "Onion Rings",
+          "desc": "Crispy beer-battered onion rings with dipping sauce.",
+          "price": 3.50,
+          "image": "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=300&q=80"
+        },
+        {
+          "id": "m22",
+          "category": "Shakes",
+          "name": "Chocolate Milkshake",
+          "desc": "Thick creamy chocolate shake with whipped cream.",
+          "price": 4.50,
+          "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=300&q=80"
+        }
       ]
     },
     {
       "id": "r6",
       "name": "Sushi Garden",
-      "cuisine": ["Japanese", "Asian"],
+      "cuisine": [
+        "Japanese",
+        "Asian"
+      ],
       "image": "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=600&q=80",
       "rating": 4.9,
       "reviews": 143,
@@ -119,40 +311,212 @@
       "minOrder": 15.00,
       "promo": null,
       "featured": true,
-      "tags": ["Sushi", "Ramen", "Rolls"],
+      "tags": [
+        "Sushi",
+        "Ramen",
+        "Rolls"
+      ],
       "address": "17 Airport Hills, Accra",
       "menu": [
-        { "id": "m23", "category": "Rolls", "name": "Dragon Roll (8 pcs)", "desc": "Shrimp tempura inside, avocado outside, drizzled with eel sauce.", "price": 18.00, "image": "https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=300&q=80" },
-        { "id": "m24", "category": "Rolls", "name": "Spicy Tuna Roll (6 pcs)", "desc": "Fresh tuna, spicy mayo, cucumber, sesame seeds.", "price": 14.00, "image": "https://images.unsplash.com/photo-1559410545-0bdcd187e0a6?w=300&q=80" },
-        { "id": "m25", "category": "Ramen", "name": "Tonkotsu Ramen", "desc": "Rich pork bone broth, chashu pork, soft-boiled egg, nori, bamboo shoots.", "price": 16.00, "image": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=300&q=80" },
-        { "id": "m26", "category": "Drinks", "name": "Japanese Green Tea", "desc": "Authentic ceremonial-grade matcha served hot.", "price": 3.00, "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&q=80" }
+        {
+          "id": "m23",
+          "category": "Rolls",
+          "name": "Dragon Roll (8 pcs)",
+          "desc": "Shrimp tempura inside, avocado outside, drizzled with eel sauce.",
+          "price": 18.00,
+          "image": "https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=300&q=80"
+        },
+        {
+          "id": "m24",
+          "category": "Rolls",
+          "name": "Spicy Tuna Roll (6 pcs)",
+          "desc": "Fresh tuna, spicy mayo, cucumber, sesame seeds.",
+          "price": 14.00,
+          "image": "https://images.unsplash.com/photo-1559410545-0bdcd187e0a6?w=300&q=80"
+        },
+        {
+          "id": "m25",
+          "category": "Ramen",
+          "name": "Tonkotsu Ramen",
+          "desc": "Rich pork bone broth, chashu pork, soft-boiled egg, nori, bamboo shoots.",
+          "price": 16.00,
+          "image": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=300&q=80"
+        },
+        {
+          "id": "m26",
+          "category": "Drinks",
+          "name": "Japanese Green Tea",
+          "desc": "Authentic ceremonial-grade matcha served hot.",
+          "price": 3.00,
+          "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&q=80"
+        }
       ]
     }
   ],
   "promos": [
-    { "id": "p1", "tag": "Limited Offer", "title": "Get 20% off your first order", "subtitle": "Use code CHOW20 at checkout", "bg": "linear-gradient(135deg, #ff5a1f 0%, #e53935 100%)", "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80" },
-    { "id": "p2", "tag": "Free Delivery", "title": "Free delivery on orders over ₵50", "subtitle": "Every weekend, all restaurants", "bg": "linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)", "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80" },
-    { "id": "p3", "tag": "New", "title": "Sushi Garden is now on ChowDash!", "subtitle": "Order premium sushi, delivered fast", "bg": "linear-gradient(135deg, #0f3460 0%, #533483 100%)", "image": "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=600&q=80" }
+    {
+      "id": "p1",
+      "tag": "Limited Offer",
+      "title": "Get 20% off your first order",
+      "subtitle": "Use code CHOW20 at checkout",
+      "bg": "linear-gradient(135deg, #ff5a1f 0%, #e53935 100%)",
+      "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80"
+    },
+    {
+      "id": "p2",
+      "tag": "Free Delivery",
+      "title": "Free delivery on orders over ₵50",
+      "subtitle": "Every weekend, all restaurants",
+      "bg": "linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)",
+      "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80"
+    },
+    {
+      "id": "p3",
+      "tag": "New",
+      "title": "Sushi Garden is now on ChowDash!",
+      "subtitle": "Order premium sushi, delivered fast",
+      "bg": "linear-gradient(135deg, #0f3460 0%, #533483 100%)",
+      "image": "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=600&q=80"
+    }
   ],
   "categories": [
-    { "id": "cat1", "name": "Rice", "icon": "🍚", "filter": "Nigerian" },
-    { "id": "cat2", "name": "Burgers", "icon": "🍔", "filter": "American" },
-    { "id": "cat3", "name": "Pizza", "icon": "🍕", "filter": "Italian" },
-    { "id": "cat4", "name": "Shawarma", "icon": "🌯", "filter": "Middle Eastern" },
-    { "id": "cat5", "name": "Grills", "icon": "🥩", "filter": "BBQ" },
-    { "id": "cat6", "name": "Sushi", "icon": "🍱", "filter": "Japanese" },
-    { "id": "cat7", "name": "Smoothies", "icon": "🥤", "filter": "Drinks" },
-    { "id": "cat8", "name": "Desserts", "icon": "🍰", "filter": "Desserts" }
+    {
+      "id": "cat1",
+      "name": "Rice",
+      "icon": "🍚",
+      "filter": "Nigerian"
+    },
+    {
+      "id": "cat2",
+      "name": "Burgers",
+      "icon": "🍔",
+      "filter": "American"
+    },
+    {
+      "id": "cat3",
+      "name": "Pizza",
+      "icon": "🍕",
+      "filter": "Italian"
+    },
+    {
+      "id": "cat4",
+      "name": "Shawarma",
+      "icon": "🌯",
+      "filter": "Middle Eastern"
+    },
+    {
+      "id": "cat5",
+      "name": "Grills",
+      "icon": "🥩",
+      "filter": "BBQ"
+    },
+    {
+      "id": "cat6",
+      "name": "Sushi",
+      "icon": "🍱",
+      "filter": "Japanese"
+    },
+    {
+      "id": "cat7",
+      "name": "Smoothies",
+      "icon": "🥤",
+      "filter": "Drinks"
+    },
+    {
+      "id": "cat8",
+      "name": "Desserts",
+      "icon": "🍰",
+      "filter": "Desserts"
+    }
   ],
   "deals": [
-    { "id": "d1", "name": "Jollof Rice + Chicken", "restaurant": "Mama's Kitchen", "oldPrice": 10.00, "newPrice": 8.00, "image": "https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=300&q=80", "restaurantId": "r1", "itemId": "m1" },
-    { "id": "d2", "name": "Chicken Shawarma", "restaurant": "Shawarma Zone", "oldPrice": 9.50, "newPrice": 7.50, "image": "https://images.unsplash.com/photo-1561651823-34feb02250e4?w=300&q=80", "restaurantId": "r4", "itemId": "m15" },
-    { "id": "d3", "name": "Pepperoni Supreme", "restaurant": "Pizza Palace", "oldPrice": 18.00, "newPrice": 15.00, "image": "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=300&q=80", "restaurantId": "r3", "itemId": "m10" },
-    { "id": "d4", "name": "Suya Beef Skewers", "restaurant": "Fire Grill House", "oldPrice": 14.00, "newPrice": 11.00, "image": "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=300&q=80", "restaurantId": "r2", "itemId": "m6" }
+    {
+      "id": "d1",
+      "name": "Jollof Rice + Chicken",
+      "restaurant": "Mama's Kitchen",
+      "oldPrice": 10.00,
+      "newPrice": 8.00,
+      "image": "https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=300&q=80",
+      "restaurantId": "r1",
+      "itemId": "m1"
+    },
+    {
+      "id": "d2",
+      "name": "Chicken Shawarma",
+      "restaurant": "Shawarma Zone",
+      "oldPrice": 9.50,
+      "newPrice": 7.50,
+      "image": "https://images.unsplash.com/photo-1561651823-34feb02250e4?w=300&q=80",
+      "restaurantId": "r4",
+      "itemId": "m15"
+    },
+    {
+      "id": "d3",
+      "name": "Pepperoni Supreme",
+      "restaurant": "Pizza Palace",
+      "oldPrice": 18.00,
+      "newPrice": 15.00,
+      "image": "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=300&q=80",
+      "restaurantId": "r3",
+      "itemId": "m10"
+    },
+    {
+      "id": "d4",
+      "name": "Suya Beef Skewers",
+      "restaurant": "Fire Grill House",
+      "oldPrice": 14.00,
+      "newPrice": 11.00,
+      "image": "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=300&q=80",
+      "restaurantId": "r2",
+      "itemId": "m6"
+    }
   ],
   "orders": [
-    { "id": "ord1", "restaurant": "Mama's Kitchen", "items": ["Jollof Rice + Chicken", "Zobo Drink (Large)"], "total": 11.00, "date": "Today, 12:30 PM", "status": "ongoing", "deliveryAddress": "East Legon, Accra", "estimatedTime": "15 min", "rider": { "name": "Kwame Asante", "vehicle": "Honda Dispatch · GH-2341-22", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Kwame" } },
-    { "id": "ord2", "restaurant": "Shawarma Zone", "items": ["Chicken Shawarma", "Mango Smoothie"], "total": 11.00, "date": "Yesterday, 7:15 PM", "status": "delivered", "deliveryAddress": "East Legon, Accra", "estimatedTime": "Delivered", "rider": null },
-    { "id": "ord3", "restaurant": "Pizza Palace", "items": ["Pepperoni Supreme", "Fresh Lemonade"], "total": 17.50, "date": "May 10, 3:45 PM", "status": "delivered", "deliveryAddress": "East Legon, Accra", "estimatedTime": "Delivered", "rider": null }
+    {
+      "id": "ord1",
+      "restaurant": "Mama's Kitchen",
+      "items": [
+        "Jollof Rice + Chicken",
+        "Zobo Drink (Large)"
+      ],
+      "total": 11.00,
+      "date": "Today, 12:30 PM",
+      "status": "ongoing",
+      "deliveryAddress": "East Legon, Accra",
+      "estimatedTime": "15 min",
+      "rider": {
+        "name": "Kwame Asante",
+        "vehicle": "Honda Dispatch · GH-2341-22",
+        "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Kwame"
+      }
+    },
+    {
+      "id": "ord2",
+      "restaurant": "Shawarma Zone",
+      "items": [
+        "Chicken Shawarma",
+        "Mango Smoothie"
+      ],
+      "total": 11.00,
+      "date": "Yesterday, 7:15 PM",
+      "status": "delivered",
+      "deliveryAddress": "East Legon, Accra",
+      "estimatedTime": "Delivered",
+      "rider": null
+    },
+    {
+      "id": "ord3",
+      "restaurant": "Pizza Palace",
+      "items": [
+        "Pepperoni Supreme",
+        "Fresh Lemonade"
+      ],
+      "total": 17.50,
+      "date": "May 10, 3:45 PM",
+      "status": "delivered",
+      "deliveryAddress": "East Legon, Accra",
+      "estimatedTime": "Delivered",
+      "rider": null
+    }
   ]
 }
