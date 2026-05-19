@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { type Order } from '../data/mockData';
 import { Search, Filter, Clock, CheckCircle2, XCircle, Truck } from 'lucide-react';
 import api from '../utils/api';
 
