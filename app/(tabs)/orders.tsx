@@ -1,17 +1,60 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Platform, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import data from '../../data/sample-restaurants.json';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
+import api from '../../utils/api';
+import { getSocket, joinOrderRoom, leaveOrderRoom } from '../../utils/socket';
 
 export default function OrdersScreen() {
   const [activeTab, setActiveTab] = useState('ongoing'); // 'ongoing' or 'past'
   const { colors, isDark } = useTheme();
   const { t } = useTranslation();
-  const orders = (data as any).orders || [];
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const ongoingOrders = orders.filter((o: any) => o.status === 'ongoing');
+  useEffect(() => {
+    fetchOrders();
+    const socket = getSocket();
+
+    const handleStatusUpdate = (data: any) => {
+      setOrders(prevOrders => prevOrders.map(o => {
+        if (o.id === data.orderId) {
+          return { ...o, status: data.status, riderName: data.riderName || o.riderName, estimatedTime: data.estimatedTime || o.estimatedTime };
+        }
+        return o;
+      }));
+    };
+
+    socket.on('order:status_updated', handleStatusUpdate);
+    socket.on('order:updated', handleStatusUpdate);
+
+    return () => {
+      socket.off('order:status_updated', handleStatusUpdate);
+      socket.off('order:updated', handleStatusUpdate);
+    };
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      const response = await api.get('/orders/client');
+      const fetchedOrders = response.data.data || [];
+      setOrders(fetchedOrders);
+      
+      // Join room for each active order
+      fetchedOrders.forEach((order: any) => {
+        if (['pending', 'processing', 'heading_to_restaurant', 'at_restaurant', 'heading_to_customer', 'at_customer'].includes(order.status)) {
+          joinOrderRoom(order.id);
+        }
+      });
+    } catch (err) {
+      console.error('Failed to fetch orders:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const ongoingOrders = orders.filter((o: any) => ['pending', 'processing', 'heading_to_restaurant', 'at_restaurant', 'heading_to_customer', 'at_customer'].includes(o.status));
   const pastOrders = orders.filter((o: any) => o.status === 'delivered' || o.status === 'cancelled');
 
   const renderActiveOrder = (order: any) => (
@@ -22,30 +65,30 @@ export default function OrdersScreen() {
             <Ionicons name="restaurant" size={20} color={colors.primary} />
           </View>
           <View>
-            <Text style={[styles.restaurantName, { color: colors.text }]}>{order.restaurant}</Text>
-            <Text style={[styles.orderDate, { color: colors.textSecondary }]}>{order.date}</Text>
+            <Text style={[styles.restaurantName, { color: colors.text }]}>{order.restaurantName || order.restaurant}</Text>
+            <Text style={[styles.orderDate, { color: colors.textSecondary }]}>{new Date(order.date).toLocaleString()}</Text>
           </View>
         </View>
       <View style={[styles.statusBadgeOngoing, { backgroundColor: isDark ? '#4A2B00' : '#FFF3E0' }]}>
-        <Text style={[styles.statusTextOngoing, { color: isDark ? '#FFB74D' : '#F57C00' }]}>{t('preparing')}</Text>
+        <Text style={[styles.statusTextOngoing, { color: isDark ? '#FFB74D' : '#F57C00' }]}>{order.status}</Text>
       </View>
       </View>
 
       <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
       <View style={styles.orderItemsContainer}>
-        <Text style={[styles.itemsText, { color: colors.textSecondary }]}>{order.items.join(', ')}</Text>
+        <Text style={[styles.itemsText, { color: colors.textSecondary }]}>{order.items.map((i: any) => `${i.quantity}x ${i.name}`).join(', ')}</Text>
         <Text style={[styles.totalText, { color: colors.text }]}>₵{order.total.toFixed(2)}</Text>
       </View>
 
       <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-      {order.rider && (
+      {order.riderName && (
         <View style={[styles.riderContainer, { backgroundColor: isDark ? '#222' : '#F9F9F9' }]}>
-          <Image source={{ uri: order.rider.avatar }} style={styles.riderAvatar} />
+          <View style={styles.riderAvatar} />
           <View style={styles.riderInfo}>
-            <Text style={[styles.riderName, { color: colors.text }]}>{order.rider.name}</Text>
-            <Text style={[styles.riderVehicle, { color: colors.textSecondary }]}>{order.rider.vehicle}</Text>
+            <Text style={[styles.riderName, { color: colors.text }]}>{order.riderName}</Text>
+            <Text style={[styles.riderVehicle, { color: colors.textSecondary }]}>{order.riderPhone || 'Courier'}</Text>
           </View>
           <View style={styles.riderActions}>
             <TouchableOpacity style={[styles.riderBtn, { backgroundColor: isDark ? '#333' : '#FBE8E8' }]}>
@@ -59,7 +102,7 @@ export default function OrdersScreen() {
       )}
 
       <View style={styles.trackingContainer}>
-        <Text style={[styles.etaText, { color: colors.text }]}>{t('estimated_delivery')}: {order.estimatedTime}</Text>
+        <Text style={[styles.etaText, { color: colors.text }]}>{t('estimated_delivery')}: {order.estimatedTime || 'N/A'}</Text>
         <TouchableOpacity style={[styles.trackBtn, { backgroundColor: colors.primary }]}>
           <Text style={styles.trackBtnText}>{t('track_order')}</Text>
         </TouchableOpacity>
@@ -70,17 +113,17 @@ export default function OrdersScreen() {
   const renderPastOrder = (order: any) => (
     <View key={order.id} style={[styles.pastOrderCard, { backgroundColor: colors.card }]}>
       <View style={styles.pastOrderHeader}>
-        <Text style={[styles.restaurantName, { color: colors.text }]}>{order.restaurant}</Text>
+        <Text style={[styles.restaurantName, { color: colors.text }]}>{order.restaurantName || order.restaurant}</Text>
         <Text style={[styles.totalText, { color: colors.text }]}>₵{order.total.toFixed(2)}</Text>
       </View>
       <View style={styles.pastOrderMeta}>
-        <Text style={[styles.orderDate, { color: colors.textSecondary }]}>{order.date}</Text>
+        <Text style={[styles.orderDate, { color: colors.textSecondary }]}>{new Date(order.date).toLocaleString()}</Text>
         <View style={[styles.statusBadgeDelivered, { backgroundColor: isDark ? '#1B5E20' : '#E8F5E9' }]}>
-          <Ionicons name="checkmark-circle" size={14} color={isDark ? '#81C784' : '#4CAF50'} />
-          <Text style={[styles.statusTextDelivered, { color: isDark ? '#81C784' : '#4CAF50' }]}>{t('delivered')}</Text>
+          <Ionicons name={order.status === 'cancelled' ? 'close-circle' : 'checkmark-circle'} size={14} color={order.status === 'cancelled' ? '#E53935' : (isDark ? '#81C784' : '#4CAF50')} />
+          <Text style={[styles.statusTextDelivered, { color: order.status === 'cancelled' ? '#E53935' : (isDark ? '#81C784' : '#4CAF50') }]}>{order.status}</Text>
         </View>
       </View>
-      <Text style={[styles.itemsText, { color: colors.textSecondary }]} numberOfLines={1}>{order.items.join(', ')}</Text>
+      <Text style={[styles.itemsText, { color: colors.textSecondary }]} numberOfLines={1}>{order.items.map((i: any) => `${i.quantity}x ${i.name}`).join(', ')}</Text>
       
       <View style={styles.pastOrderActions}>
         <TouchableOpacity style={[styles.rateBtn, { backgroundColor: isDark ? '#333' : '#F5F5F5' }]}>
@@ -119,7 +162,9 @@ export default function OrdersScreen() {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        {activeTab === 'ongoing' ? (
+        {loading ? (
+          <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 60 }} />
+        ) : activeTab === 'ongoing' ? (
           ongoingOrders.length > 0 ? (
             ongoingOrders.map(renderActiveOrder)
           ) : (
