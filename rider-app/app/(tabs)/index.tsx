@@ -15,9 +15,11 @@ import { useRiderStore } from '../../store/riderStore';
 import { SwipeButton } from '../../components/SwipeButton';
 import { OrderAlertModal } from '../../components/OrderAlertModal';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../../context/ThemeContext';
 
 export default function DashboardScreen() {
   const router = useRouter();
+  const { colors } = useTheme();
   const {
     isOnline,
     status,
@@ -42,23 +44,23 @@ export default function DashboardScreen() {
   }, [status]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Map Section */}
       {useMockMap ? (
-        // Beautiful dark futuristic vector map mock for web and testing fallback
-        <View style={styles.mockMapContainer}>
-          <Compass color="#FF3D00" size={50} style={styles.mockCompass} />
+        // Beautiful futuristic vector map mock for web and testing fallback
+        <View style={[styles.mockMapContainer, { backgroundColor: colors.surface }]}>
+          <Compass stroke={colors.primary} size={50} style={styles.mockCompass as any} />
           {status === 'searching' && (
             <View style={styles.radarContainer}>
               <View style={styles.radarRing1} />
               <View style={styles.radarRing2} />
               <View style={styles.radarRing3} />
-              <Radio color="#FF3D00" size={32} />
-              <Text style={styles.radarText}>Searching for matching orders...</Text>
+              <Radio stroke={colors.primary} size={32} />
+              <Text style={[styles.radarText, { color: colors.textSecondary }]}>Searching for matching orders...</Text>
             </View>
           )}
           {status === 'offline' && (
-            <Text style={styles.offlineMapText}>You are currently offline</Text>
+            <Text style={[styles.offlineMapText, { color: colors.textSecondary }]}>You are currently offline</Text>
           )}
         </View>
       ) : (
@@ -70,12 +72,12 @@ export default function DashboardScreen() {
             latitudeDelta: 0.02,
             longitudeDelta: 0.02,
           }}
-          customMapStyle={darkMapStyle}
-          onError={() => setUseMockMap(true)} // Fallback if maps failure
+          customMapStyle={colors.mapStyle}
+          // Fallback handled via useMockMap state
         >
           <Marker coordinate={currentLocation}>
             <View style={styles.riderMarker}>
-              <View style={styles.riderMarkerCore} />
+              <View style={[styles.riderMarkerCore, { backgroundColor: colors.primary }]} />
             </View>
           </Marker>
 
@@ -85,14 +87,14 @@ export default function DashboardScreen() {
               <Circle
                 center={{ latitude: 5.6322, longitude: -0.1585 }}
                 radius={800}
-                fillColor="rgba(255, 61, 0, 0.15)"
-                strokeColor="rgba(255, 61, 0, 0.3)"
+                fillColor="rgba(229, 57, 53, 0.15)"
+                strokeColor="rgba(229, 57, 53, 0.3)"
               />
               <Circle
                 center={{ latitude: 5.6062, longitude: -0.1762 }}
                 radius={600}
-                fillColor="rgba(255, 61, 0, 0.1)"
-                strokeColor="rgba(255, 61, 0, 0.2)"
+                fillColor="rgba(229, 57, 53, 0.1)"
+                strokeColor="rgba(229, 57, 53, 0.2)"
               />
             </>
           )}
@@ -101,41 +103,41 @@ export default function DashboardScreen() {
 
       {/* Ticking Radar Indicator for Online State (Overlay) */}
       {isOnline && status === 'searching' && !useMockMap && (
-        <View style={styles.searchingOverlay}>
-          <ActivityIndicator color="#FF3D00" size="small" />
-          <Text style={styles.searchingText}>Searching for trips near East Legon...</Text>
+        <View style={[styles.searchingOverlay, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <ActivityIndicator color={colors.primary} size="small" />
+          <Text style={[styles.searchingText, { color: colors.text }]}>Searching for trips near East Legon...</Text>
         </View>
       )}
 
       {/* Floating Status Bar / Header (Always Visible) */}
       <SafeAreaView style={styles.headerContainer} edges={['top']}>
-        <View style={styles.statsHeader}>
+        <View style={[styles.statsHeader, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           {/* Today's Earning Summaries - The Chowdeck influence */}
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>TODAY</Text>
-            <Text style={styles.statValue}>GH₵ {earnings.today.toFixed(2)}</Text>
+            <Text style={[styles.statValue, { color: colors.text }]}>GH₵ {earnings.today.toFixed(2)}</Text>
           </View>
 
-          <View style={styles.statDivider} />
+          <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
 
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>TRIPS</Text>
-            <Text style={styles.statValue}>{earnings.tripsCompleted}</Text>
+            <Text style={[styles.statValue, { color: colors.text }]}>{earnings.tripsCompleted}</Text>
           </View>
 
-          <View style={styles.statDivider} />
+          <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
 
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>RATING</Text>
-            <Text style={styles.statValue}>★ {earnings.rating}</Text>
+            <Text style={[styles.statValue, { color: colors.text }]}>★ {earnings.rating}</Text>
           </View>
         </View>
 
         {/* Active Incentives - Chowdeck Gamification */}
         {isOnline && (
-          <View style={styles.incentiveCard}>
-            <Target color="#FF3D00" size={16} />
-            <Text style={styles.incentiveText}>
+          <View style={[styles.incentiveCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <Target stroke={colors.primary} size={16} />
+            <Text style={[styles.incentiveText, { color: colors.text }]}>
               Incentive: Complete {bonusTarget.target} trips for GH₵ {bonusTarget.amount} bonus ({bonusTarget.current}/{bonusTarget.target})
             </Text>
           </View>
@@ -147,7 +149,7 @@ export default function DashboardScreen() {
         <SwipeButton
           onSwipeSuccess={toggleOnline}
           title={isOnline ? "SWIPE TO GO OFFLINE" : "SWIPE TO GO ONLINE"}
-          color={isOnline ? "#E53935" : "#4CAF50"} // Green for Online, Red for Offline
+          color={isOnline ? colors.primary : colors.success}
         />
       </View>
 
@@ -161,7 +163,6 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
   },
   map: {
     width: Dimensions.get('window').width,
@@ -170,7 +171,6 @@ const styles = StyleSheet.create({
   mockMapContainer: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
-    backgroundColor: '#161616',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -183,13 +183,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   radarText: {
-    color: '#8E8E93',
     fontSize: 14,
     fontWeight: '700',
     marginTop: 16,
   },
   offlineMapText: {
-    color: '#555555',
     fontSize: 16,
     fontWeight: '700',
   },
@@ -197,23 +195,21 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: 'rgba(255, 61, 0, 0.2)',
+    backgroundColor: 'rgba(229, 57, 53, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255, 61, 0, 0.4)',
+    borderColor: 'rgba(229, 57, 53, 0.4)',
   },
   riderMarkerCore: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#FF3D00',
   },
   searchingOverlay: {
     position: 'absolute',
     top: 150,
     alignSelf: 'center',
-    backgroundColor: '#1E1E1E',
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -221,10 +217,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     borderWidth: 1,
-    borderColor: '#2D2D2D',
   },
   searchingText: {
-    color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '700',
   },
@@ -240,7 +234,6 @@ const styles = StyleSheet.create({
   },
   statsHeader: {
     flexDirection: 'row',
-    backgroundColor: '#1E1E1E',
     borderRadius: 16,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -248,7 +241,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2D2D2D',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -267,29 +259,24 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   statValue: {
-    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '800',
   },
   statDivider: {
     width: 1,
     height: 24,
-    backgroundColor: '#2D2D2D',
   },
   incentiveCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1E1E1E',
     borderRadius: 12,
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderWidth: 1,
-    borderColor: '#2D2D2D',
     gap: 8,
     width: '100%',
   },
   incentiveText: {
-    color: '#E0E0E0',
     fontSize: 11,
     fontWeight: '700',
     flex: 1,
@@ -309,7 +296,7 @@ const styles = StyleSheet.create({
     height: 160,
     borderRadius: 80,
     borderWidth: 1,
-    borderColor: 'rgba(255, 61, 0, 0.1)',
+    borderColor: 'rgba(229, 57, 53, 0.1)',
   },
   radarRing2: {
     position: 'absolute',
@@ -317,7 +304,7 @@ const styles = StyleSheet.create({
     height: 240,
     borderRadius: 120,
     borderWidth: 1,
-    borderColor: 'rgba(255, 61, 0, 0.05)',
+    borderColor: 'rgba(229, 57, 53, 0.05)',
   },
   radarRing3: {
     position: 'absolute',
@@ -325,48 +312,6 @@ const styles = StyleSheet.create({
     height: 320,
     borderRadius: 160,
     borderWidth: 1,
-    borderColor: 'rgba(255, 61, 0, 0.02)',
+    borderColor: 'rgba(229, 57, 53, 0.02)',
   },
 });
-
-// Sleek Uber/Chowdeck dark mode styling for MapView
-const darkMapStyle = [
-  { elementType: 'geometry', stylers: [{ color: '#161616' }] },
-  { elementType: 'labels.text.stroke', stylers: [{ color: '#161616' }] },
-  { elementType: 'labels.text.fill', stylers: [{ color: '#747474' }] },
-  {
-    featureType: 'administrative.locality',
-    elementType: 'labels.text.fill',
-    stylers: [{ color: '#d59563' }],
-  },
-  {
-    featureType: 'poi',
-    elementType: 'labels.text.fill',
-    stylers: [{ color: '#505050' }],
-  },
-  {
-    featureType: 'poi.park',
-    elementType: 'geometry',
-    stylers: [{ color: '#121212' }],
-  },
-  {
-    featureType: 'road',
-    elementType: 'geometry',
-    stylers: [{ color: '#252525' }],
-  },
-  {
-    featureType: 'road',
-    elementType: 'geometry.stroke',
-    stylers: [{ color: '#1d1d1d' }],
-  },
-  {
-    featureType: 'road.highway',
-    elementType: 'geometry',
-    stylers: [{ color: '#303030' }],
-  },
-  {
-    featureType: 'water',
-    elementType: 'geometry',
-    stylers: [{ color: '#0d0d0d' }],
-  },
-];

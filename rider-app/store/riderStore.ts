@@ -1,4 +1,7 @@
 import { create } from 'zustand';
+import api from '../utils/api';
+import { getSocket, connectSocket, disconnectSocket, joinRidersRoom, updateLocation, updateOrderStatus } from '../utils/socket';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export type RiderStatus =
   | 'offline'
@@ -63,6 +66,7 @@ interface RiderState {
   decrementTimer: () => void;
   cashOut: () => void;
   triggerMockOrderAlert: () => void;
+  initializeSocketListeners: () => void;
 }
 
 // Accra-based mockup coordinates
@@ -108,19 +112,61 @@ export const useRiderStore = create<RiderState>((set, get) => ({
   },
   alertTimer: 15,
 
-  toggleOnline: () => {
+  toggleOnline: async () => {
     const nextOnlineState = !get().isOnline;
     if (nextOnlineState) {
       set({ isOnline: true, status: 'searching' });
-      // Simulate searching and finding an order after 4 seconds
-      setTimeout(() => {
-        if (get().status === 'searching') {
-          get().triggerMockOrderAlert();
-        }
-      }, 4000);
+      
+      try {
+        // DEV HACK: Auto-login as the seeded rider for testing
+        const res = await api.post('/auth/login', { email: 'rider@kaledash.com', password: 'Rider1234!' });
+        const { token } = res.data;
+        await AsyncStorage.setItem('auth_token', token);
+        
+        connectSocket(token);
+        get().initializeSocketListeners();
+        joinRidersRoom();
+      } catch (err) {
+        console.error('Failed to login rider:', err);
+      }
     } else {
       set({ isOnline: false, status: 'offline', activeOrder: null });
+      disconnectSocket();
     }
+  },
+
+  initializeSocketListeners: () => {
+    const socket = getSocket();
+    
+    socket.off('order:new'); // prevent duplicate listeners
+    socket.on('order:new', (order: any) => {
+      // Map backend order to RiderOrder format
+      const incomingOrder: RiderOrder = {
+        id: order.id,
+        restaurantName: order.restaurantName,
+        restaurantAddress: order.deliveryAddress || '12 Ring Road, East Legon', // fallback
+        restaurantLocation: { latitude: 5.6322, longitude: -0.1585 },
+        customerName: order.customerName,
+        customerAddress: order.deliveryAddress,
+        customerLocation: order.deliveryCoordinates || { latitude: 5.6062, longitude: -0.1762 },
+        deliveryNotes: 'Standard Delivery',
+        paymentMethod: 'Cash on Delivery',
+        items: order.items.map((i: any) => `${i.quantity}x ${i.name}`),
+        totalPrice: order.total,
+        estimatedEarnings: 8.50, // mock payout calculation
+        pickupDistance: '1.2 km',
+        dropoffDistance: '3.4 km',
+        estimatedTime: '22 min',
+      };
+      
+      if (get().status === 'searching') {
+        set({
+          status: 'order_alert',
+          activeOrder: incomingOrder,
+          alertTimer: 15,
+        });
+      }
+    });
   },
 
   triggerMockOrderAlert: () => {
@@ -131,18 +177,20 @@ export const useRiderStore = create<RiderState>((set, get) => ({
     });
   },
 
-  acceptOrder: () => {
+  acceptOrder: async () => {
     set({ status: 'heading_to_restaurant' });
+    const order = get().activeOrder;
+    if (order) {
+      // Assign rider to order and update status to processing
+      try {
+        await api.put(`/orders/${order.id}`, { status: 'heading_to_restaurant', riderName: 'Kwame Asante', riderPhone: '+233 24 000 0001' });
+        updateOrderStatus(order.id, 'heading_to_restaurant');
+      } catch (err) { console.error('Failed to accept order on backend', err); }
+    }
   },
 
   rejectOrder: () => {
     set({ status: 'searching', activeOrder: null });
-    // Search again after a delay
-    setTimeout(() => {
-      if (get().status === 'searching') {
-        get().triggerMockOrderAlert();
-      }
-    }, 6000);
   },
 
   setAlertTimer: (time) => set({ alertTimer: time }),
@@ -156,51 +204,56 @@ export const useRiderStore = create<RiderState>((set, get) => ({
     }
   },
 
-  advanceStatus: () => {
+  advanceStatus: async () => {
     const currentStatus = get().status;
+    const order = get().activeOrder;
+    
+    let nextStatus: RiderStatus = currentStatus;
     switch (currentStatus) {
-      case 'heading_to_restaurant':
-        set({ status: 'at_restaurant' });
-        break;
-      case 'at_restaurant':
-        set({ status: 'heading_to_customer' });
-        break;
-      case 'heading_to_customer':
-        set({ status: 'at_customer' });
-        break;
-      case 'at_customer':
-        // Deliver completed! Update earnings
-        const order = get().activeOrder;
-        const reward = order ? order.estimatedEarnings : 0;
-        set((state) => ({
-          status: 'completed',
-          earnings: {
-            ...state.earnings,
-            today: state.earnings.today + reward,
-            total: state.earnings.total + reward,
-            tripsCompleted: state.earnings.tripsCompleted + 1,
-          },
-          bonusTarget: {
-            ...state.bonusTarget,
-            current: Math.min(state.bonusTarget.current + 1, state.bonusTarget.target),
-          }
-        }));
-        
-        // Auto return to searching after 3 seconds of showing success state
-        setTimeout(() => {
-          if (get().status === 'completed') {
-            set({ status: 'searching', activeOrder: null });
-            // Simulate searching again
-            setTimeout(() => {
-              if (get().status === 'searching') {
-                get().triggerMockOrderAlert();
-              }
-            }, 6000);
-          }
-        }, 4000);
-        break;
-      default:
-        break;
+      case 'heading_to_restaurant': nextStatus = 'at_restaurant'; break;
+      case 'at_restaurant': nextStatus = 'heading_to_customer'; break;
+      case 'heading_to_customer': nextStatus = 'at_customer'; break;
+      case 'at_customer': nextStatus = 'completed'; break;
+      default: return;
+    }
+
+    set({ status: nextStatus });
+
+    if (order && nextStatus !== 'completed') {
+      try {
+        await api.put(`/orders/${order.id}`, { status: nextStatus });
+        updateOrderStatus(order.id, nextStatus);
+      } catch (err) { console.error('Status update failed', err); }
+    }
+
+    if (nextStatus === 'completed') {
+      if (order) {
+        try {
+          await api.put(`/orders/${order.id}`, { status: 'delivered' });
+          updateOrderStatus(order.id, 'delivered');
+        } catch (err) { console.error('Delivery complete failed', err); }
+      }
+
+      const reward = order ? order.estimatedEarnings : 0;
+      set((state) => ({
+        earnings: {
+          ...state.earnings,
+          today: state.earnings.today + reward,
+          total: state.earnings.total + reward,
+          tripsCompleted: state.earnings.tripsCompleted + 1,
+        },
+        bonusTarget: {
+          ...state.bonusTarget,
+          current: Math.min(state.bonusTarget.current + 1, state.bonusTarget.target),
+        }
+      }));
+      
+      // Auto return to searching after 3 seconds of showing success state
+      setTimeout(() => {
+        if (get().status === 'completed') {
+          set({ status: 'searching', activeOrder: null });
+        }
+      }, 4000);
     }
   },
 

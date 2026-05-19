@@ -10,8 +10,10 @@ import {
 import { Wallet, Landmark, ArrowUpRight, TrendingUp, Calendar, ChevronRight, Award } from 'lucide-react-native';
 import { useRiderStore } from '../../store/riderStore';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../../context/ThemeContext';
 
 export default function EarningsScreen() {
+  const { colors } = useTheme();
   const { earnings, bonusTarget, cashOut } = useRiderStore();
   const [cashedOutSuccess, setCashedOutSuccess] = useState(false);
 
@@ -30,33 +32,33 @@ export default function EarningsScreen() {
 
   // Mock weekly history statistics data
   const weeklyData = [
-    { day: 'Mon', amount: 85, height: '40%' },
-    { day: 'Tue', amount: 110, height: '55%' },
-    { day: 'Wed', amount: 95, height: '45%' },
-    { day: 'Thu', amount: 140, height: '70%' },
-    { day: 'Fri', amount: 190, height: '95%' },
-    { day: 'Sat', amount: 120, height: '60%' },
-    { day: 'Sun', amount: earnings.today, height: `${Math.min((earnings.today / 200) * 100, 100)}%` },
+    { day: 'Mon', amount: 85, height: 40 },
+    { day: 'Tue', amount: 110, height: 55 },
+    { day: 'Wed', amount: 95, height: 45 },
+    { day: 'Thu', amount: 140, height: 70 },
+    { day: 'Fri', amount: 190, height: 95 },
+    { day: 'Sat', amount: 120, height: 60 },
+    { day: 'Sun', amount: earnings.today, height: Math.min((earnings.today / 200) * 100, 100) },
   ];
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 32 }}>
-        <Text style={styles.screenTitle}>Earnings & Wallet</Text>
+        <Text style={[styles.screenTitle, { color: colors.text }]}>Earnings & Wallet</Text>
 
         {/* Cash Out confirmation alert banner */}
         {cashedOutSuccess && (
           <View style={styles.successBanner}>
-            <Landmark color="#FFFFFF" size={18} />
+            <Landmark stroke="#FFFFFF" size={18} />
             <Text style={styles.successBannerText}>GH₵ Transfer sent to Mobile Money wallet!</Text>
           </View>
         )}
 
         {/* Main Wallet Payout Card */}
-        <View style={styles.walletCard}>
+        <View style={[styles.walletCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <View style={styles.walletHeader}>
             <View style={styles.walletLabelContainer}>
-              <Wallet color="#FF3D00" size={20} />
+              <Wallet stroke={colors.primary} size={20} />
               <Text style={styles.walletLabel}>MAIN BALANCE</Text>
             </View>
             <View style={styles.activeBadge}>
@@ -64,36 +66,36 @@ export default function EarningsScreen() {
             </View>
           </View>
 
-          <Text style={styles.walletValue}>GH₵ {earnings.total.toFixed(2)}</Text>
+          <Text style={[styles.walletValue, { color: colors.text }]}>GH₵ {earnings.total.toFixed(2)}</Text>
           <Text style={styles.todayEarnings}>Today: +GH₵ {earnings.today.toFixed(2)}</Text>
 
-          <View style={styles.cardDivider} />
+          <View style={[styles.cardDivider, { backgroundColor: colors.border }]} />
 
-          <TouchableOpacity style={styles.cashOutBtn} onPress={handleCashOut}>
-            <Landmark color="#FFFFFF" size={18} />
+          <TouchableOpacity style={[styles.cashOutBtn, { backgroundColor: colors.primary }]} onPress={handleCashOut}>
+            <Landmark stroke="#FFFFFF" size={18} />
             <Text style={styles.cashOutText}>Cash Out (Mobile Money)</Text>
-            <ArrowUpRight color="#FFFFFF" size={16} />
+            <ArrowUpRight stroke="#FFFFFF" size={16} />
           </TouchableOpacity>
         </View>
 
         {/* Chowdeck Gamified Incentive Targets */}
-        <View style={styles.sectionCard}>
+        <View style={[styles.sectionCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <View style={styles.sectionHeader}>
-            <Award color="#FF3D00" size={18} />
+            <Award stroke={colors.primary} size={18} />
             <Text style={styles.sectionTitleLabel}>DAILY CHALLENGE</Text>
           </View>
-          <Text style={styles.challengeTitle}>Weekend Rush Boost</Text>
+          <Text style={[styles.challengeTitle, { color: colors.text }]}>Weekend Rush Boost</Text>
           <Text style={styles.challengeDesc}>
             Complete {bonusTarget.target} deliveries today to secure an extra GH₵ {bonusTarget.amount.toFixed(2)} boost.
           </Text>
 
           {/* Progress bar */}
           <View style={styles.progressContainer}>
-            <View style={styles.progressBarBg}>
+            <View style={[styles.progressBarBg, { backgroundColor: colors.border }]}>
               <View
                 style={[
                   styles.progressBarFill,
-                  { width: `${(bonusTarget.current / bonusTarget.target) * 100}%` },
+                  { backgroundColor: colors.primary, width: `${(bonusTarget.current / bonusTarget.target) * 100}%` },
                 ]}
               />
             </View>
@@ -110,9 +112,9 @@ export default function EarningsScreen() {
         </View>
 
         {/* Weekly Earning Chart Representation */}
-        <View style={styles.sectionCard}>
+        <View style={[styles.sectionCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <View style={styles.sectionHeader}>
-            <TrendingUp color="#FF3D00" size={18} />
+            <TrendingUp stroke={colors.primary} size={18} />
             <Text style={styles.sectionTitleLabel}>WEEKLY STATISTICS</Text>
           </View>
 
@@ -120,8 +122,8 @@ export default function EarningsScreen() {
           <View style={styles.chartContainer}>
             {weeklyData.map((data, idx) => (
               <View key={idx} style={styles.chartBarCol}>
-                <View style={styles.chartBarBg}>
-                  <View style={[styles.chartBarFill, { height: data.height }]} />
+                <View style={[styles.chartBarBg, { backgroundColor: colors.border }]}>
+                  <View style={[styles.chartBarFill, { backgroundColor: colors.primary, height: `${data.height}%` as any }]} />
                 </View>
                 <Text style={styles.chartBarLabel}>{data.day}</Text>
               </View>
@@ -130,47 +132,47 @@ export default function EarningsScreen() {
         </View>
 
         {/* Transaction History list */}
-        <Text style={styles.historyTitle}>Trip History</Text>
+        <Text style={[styles.historyTitle, { color: colors.text }]}>Trip History</Text>
 
-        <View style={styles.historyItem}>
+        <View style={[styles.historyItem, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <View style={styles.historyLeft}>
-            <Calendar color="#B0B0B0" size={18} />
+            <Calendar stroke={colors.icon} size={18} />
             <View>
-              <Text style={styles.historyRest}>Mama's Kitchen</Text>
+              <Text style={[styles.historyRest, { color: colors.text }]}>Mama's Kitchen</Text>
               <Text style={styles.historyDate}>Today, 12:30 PM</Text>
             </View>
           </View>
           <View style={styles.historyRight}>
-            <Text style={styles.historyAmount}>+GH₵ 8.50</Text>
-            <ChevronRight color="#555555" size={16} />
+            <Text style={[styles.historyAmount, { color: colors.primary }]}>+GH₵ 8.50</Text>
+            <ChevronRight stroke={colors.icon} size={16} />
           </View>
         </View>
 
-        <View style={styles.historyItem}>
+        <View style={[styles.historyItem, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <View style={styles.historyLeft}>
-            <Calendar color="#B0B0B0" size={18} />
+            <Calendar stroke={colors.icon} size={18} />
             <View>
-              <Text style={styles.historyRest}>Pizza Palace</Text>
+              <Text style={[styles.historyRest, { color: colors.text }]}>Pizza Palace</Text>
               <Text style={styles.historyDate}>Yesterday, 7:15 PM</Text>
             </View>
           </View>
           <View style={styles.historyRight}>
-            <Text style={styles.historyAmount}>+GH₵ 12.00</Text>
-            <ChevronRight color="#555555" size={16} />
+            <Text style={[styles.historyAmount, { color: colors.primary }]}>+GH₵ 12.00</Text>
+            <ChevronRight stroke={colors.icon} size={16} />
           </View>
         </View>
 
-        <View style={styles.historyItem}>
+        <View style={[styles.historyItem, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <View style={styles.historyLeft}>
-            <Calendar color="#B0B0B0" size={18} />
+            <Calendar stroke={colors.icon} size={18} />
             <View>
-              <Text style={styles.historyRest}>Shawarma Zone</Text>
+              <Text style={[styles.historyRest, { color: colors.text }]}>Shawarma Zone</Text>
               <Text style={styles.historyDate}>May 12, 1:45 PM</Text>
             </View>
           </View>
           <View style={styles.historyRight}>
-            <Text style={styles.historyAmount}>+GH₵ 9.50</Text>
-            <ChevronRight color="#555555" size={16} />
+            <Text style={[styles.historyAmount, { color: colors.primary }]}>+GH₵ 9.50</Text>
+            <ChevronRight stroke={colors.icon} size={16} />
           </View>
         </View>
       </ScrollView>
@@ -181,10 +183,8 @@ export default function EarningsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
   },
   screenTitle: {
-    color: '#FFFFFF',
     fontSize: 24,
     fontWeight: '900',
     marginBottom: 20,
@@ -204,11 +204,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   walletCard: {
-    backgroundColor: '#1E1E1E',
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#2D2D2D',
     marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
@@ -247,7 +245,6 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
   walletValue: {
-    color: '#FFFFFF',
     fontSize: 36,
     fontWeight: '900',
   },
@@ -259,14 +256,12 @@ const styles = StyleSheet.create({
   },
   cardDivider: {
     height: 1,
-    backgroundColor: '#2D2D2D',
     marginVertical: 20,
   },
   cashOutBtn: {
     flexDirection: 'row',
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#FF3D00',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 8,
@@ -277,11 +272,9 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   sectionCard: {
-    backgroundColor: '#1E1E1E',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#2D2D2D',
     marginBottom: 20,
   },
   sectionHeader: {
@@ -297,7 +290,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   challengeTitle: {
-    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '800',
   },
@@ -313,13 +305,11 @@ const styles = StyleSheet.create({
   },
   progressBarBg: {
     height: 8,
-    backgroundColor: '#2D2D2D',
     borderRadius: 4,
     overflow: 'hidden',
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: '#FF3D00',
     borderRadius: 4,
   },
   progressText: {
@@ -357,14 +347,12 @@ const styles = StyleSheet.create({
   chartBarBg: {
     height: 90,
     width: 14,
-    backgroundColor: '#2D2D2D',
     borderRadius: 7,
     justifyContent: 'flex-end',
     overflow: 'hidden',
   },
   chartBarFill: {
     width: '100%',
-    backgroundColor: '#FF3D00',
     borderRadius: 7,
   },
   chartBarLabel: {
@@ -373,7 +361,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   historyTitle: {
-    color: '#FFFFFF',
     fontSize: 18,
     fontWeight: '800',
     marginBottom: 12,
@@ -381,13 +368,11 @@ const styles = StyleSheet.create({
   },
   historyItem: {
     flexDirection: 'row',
-    backgroundColor: '#1E1E1E',
     borderRadius: 12,
     padding: 14,
     justifyContent: 'space-between',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2D2D2D',
     marginBottom: 10,
   },
   historyLeft: {
@@ -396,7 +381,6 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   historyRest: {
-    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '700',
   },
@@ -411,7 +395,6 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   historyAmount: {
-    color: '#FF3D00',
     fontSize: 15,
     fontWeight: '800',
   },

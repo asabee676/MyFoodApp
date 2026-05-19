@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import { mockRestaurants, type Restaurant } from '../data/mockData';
+import React, { useState, useEffect } from 'react';
+import { type Restaurant } from '../data/mockData';
 import { Plus, Trash2, Edit2, Search } from 'lucide-react';
+import api from '../utils/api';
 
 export function Restaurants() {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>(mockRestaurants);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newRestaurant, setNewRestaurant] = useState<Partial<Restaurant>>({
     name: '',
@@ -15,29 +17,58 @@ export function Restaurants() {
     image: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=80&w=200'
   });
 
-  const handleAddRestaurant = (e: React.FormEvent) => {
+  useEffect(() => {
+    fetchRestaurants();
+  }, []);
+
+  const fetchRestaurants = async () => {
+    try {
+      const res = await api.get('/restaurants');
+      setRestaurants(res.data.data || []);
+    } catch (err) {
+      console.error('Failed to fetch restaurants', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddRestaurant = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newRestaurant.name || !newRestaurant.category) return;
 
-    const restaurant: Restaurant = {
-      id: Math.random().toString(36).substr(2, 9),
-      name: newRestaurant.name,
-      category: newRestaurant.category,
-      status: newRestaurant.status as 'active' | 'inactive' | 'pending',
-      orders: 0,
-      revenue: 0,
-      rating: 0,
-      image: newRestaurant.image || ''
-    };
-
-    setRestaurants([restaurant, ...restaurants]);
-    setIsModalOpen(false);
-    setNewRestaurant({ ...newRestaurant, name: '', category: '' });
+    try {
+      const payload = {
+        name: newRestaurant.name,
+        cuisine: [newRestaurant.category],
+        status: newRestaurant.status,
+        image: newRestaurant.image,
+        address: 'Accra, Ghana', // default
+        rating: 0,
+        reviews: 0,
+        deliveryTime: '30-45 min',
+        deliveryFee: 5,
+        minOrder: 10,
+        featured: false,
+        tags: []
+      };
+      await api.post('/restaurants', payload);
+      fetchRestaurants();
+      setIsModalOpen(false);
+      setNewRestaurant({ ...newRestaurant, name: '', category: '' });
+    } catch (err) {
+      console.error('Failed to create restaurant', err);
+      alert('Error creating restaurant');
+    }
   };
 
-  const handleRemoveRestaurant = (id: string) => {
+  const handleRemoveRestaurant = async (id: string) => {
     if (window.confirm('Are you sure you want to remove this restaurant?')) {
-      setRestaurants(restaurants.filter(r => r.id !== id));
+      try {
+        await api.delete(`/restaurants/${id}`);
+        setRestaurants(restaurants.filter(r => r.id !== id));
+      } catch (err) {
+        console.error('Failed to delete', err);
+      }
     }
   };
 
@@ -87,30 +118,32 @@ export function Restaurants() {
               </tr>
             </thead>
             <tbody>
-              {restaurants.map((restaurant) => (
+              {loading ? (
+                <tr><td colSpan={7} style={{ textAlign: 'center', padding: '24px' }}>Loading...</td></tr>
+              ) : restaurants.map((restaurant: any) => (
                 <tr key={restaurant.id}>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <img 
-                        src={restaurant.image} 
+                        src={restaurant.image || 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=80&w=200'} 
                         alt={restaurant.name} 
                         style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'cover' }}
                       />
                       <span style={{ fontWeight: 600 }}>{restaurant.name}</span>
                     </div>
                   </td>
-                  <td>{restaurant.category}</td>
+                  <td>{restaurant.cuisine?.[0] || restaurant.category}</td>
                   <td>
                     <span className={`badge badge-${restaurant.status === 'active' ? 'success' : restaurant.status === 'inactive' ? 'danger' : 'warning'}`}>
                       {restaurant.status}
                     </span>
                   </td>
-                  <td>{restaurant.orders.toLocaleString()}</td>
-                  <td>${restaurant.revenue.toLocaleString()}</td>
+                  <td>{restaurant.reviews || 0}</td>
+                  <td>₵0.00</td>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <span style={{ color: 'var(--warning)' }}>★</span>
-                      <span>{restaurant.rating.toFixed(1)}</span>
+                      <span>{(restaurant.rating || 0).toFixed(1)}</span>
                     </div>
                   </td>
                   <td style={{ textAlign: 'right' }}>

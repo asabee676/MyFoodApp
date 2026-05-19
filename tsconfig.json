@@ -1,16 +1,23 @@
 {
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
     "jsx": "react-jsx"
   },
-  "references": [
-    { "path": "./admin-app" },
-    { "path": "./myapp" },
-    { "path": "./rider-app" }
+  "include": [
+    "app/**/*",
+    "components/**/*",
+    "context/**/*",
+    "hooks/**/*",
+    "i18n/**/*",
+    "constants/**/*",
+    "**/*.ts",
+    "**/*.tsx"
   ],
-  "files": []
+  "exclude": [
+    "node_modules",
+    "admin-app",
+    "rider-app",
+    "myapp"
+  ]
 }

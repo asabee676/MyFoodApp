@@ -12,9 +12,11 @@ import {
 import { useRouter } from 'expo-router';
 import { Phone, Lock, ChevronRight, Compass } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../context/ThemeContext';
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { colors } = useTheme();
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState(1); // 1: Phone, 2: OTP
@@ -41,32 +43,32 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
         <View style={styles.logoSection}>
           <View style={styles.iconCircle}>
-            <Compass color="#FF3D00" size={40} strokeWidth={2.5} />
+            <Compass stroke={colors.primary} size={40} strokeWidth={2.5} />
           </View>
-          <Text style={styles.logoText}>Kale<Text style={{ color: '#FF3D00' }}>Dash</Text> Rider</Text>
+          <Text style={[styles.logoText, { color: colors.text }]}>Kale<Text style={{ color: colors.primary }}>Dash</Text> Rider</Text>
           <Text style={styles.logoSubtitle}>Fastest Deliveries, Guaranteed Earnings</Text>
         </View>
 
         <View style={styles.formSection}>
           {step === 1 ? (
             <>
-              <Text style={styles.sectionTitle}>Enter phone number</Text>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Enter phone number</Text>
               <Text style={styles.sectionSubtitle}>We will send a 4-digit code to verify your account.</Text>
 
-              <View style={styles.inputContainer}>
-                <Phone color="#8E8E93" size={20} />
-                <Text style={styles.countryCode}>+233</Text>
+              <View style={[styles.inputContainer, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
+                <Phone stroke={colors.icon} size={20} />
+                <Text style={[styles.countryCode, { color: colors.text }]}>+233</Text>
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, { color: colors.text }]}
                   placeholder="55 123 4567"
-                  placeholderTextColor="#666"
+                  placeholderTextColor={colors.textSecondary}
                   keyboardType="phone-pad"
                   value={phone}
                   onChangeText={setPhone}
@@ -75,7 +77,7 @@ export default function LoginScreen() {
               </View>
 
               <TouchableOpacity
-                style={[styles.primaryButton, !phone && styles.disabledButton]}
+                style={[styles.primaryButton, !phone && styles.disabledButton, { backgroundColor: colors.primary, shadowColor: colors.primary }]}
                 onPress={handleSendOtp}
                 disabled={!phone || loading}
               >
@@ -84,22 +86,22 @@ export default function LoginScreen() {
                 ) : (
                   <>
                     <Text style={styles.buttonText}>Get Verification Code</Text>
-                    <ChevronRight color="#FFFFFF" size={20} />
+                    <ChevronRight stroke="#FFFFFF" size={20} />
                   </>
                 )}
               </TouchableOpacity>
             </>
           ) : (
             <>
-              <Text style={styles.sectionTitle}>Verify Code</Text>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Verify Code</Text>
               <Text style={styles.sectionSubtitle}>Enter the code sent to +233 {phone}</Text>
 
-              <View style={styles.inputContainer}>
-                <Lock color="#8E8E93" size={20} />
+              <View style={[styles.inputContainer, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
+                <Lock stroke={colors.icon} size={20} />
                 <TextInput
-                  style={[styles.input, styles.otpInput]}
+                  style={[styles.input, styles.otpInput, { color: colors.text }]}
                   placeholder="0 0 0 0"
-                  placeholderTextColor="#666"
+                  placeholderTextColor={colors.textSecondary}
                   keyboardType="number-pad"
                   value={otp}
                   onChangeText={setOtp}
@@ -109,7 +111,7 @@ export default function LoginScreen() {
               </View>
 
               <TouchableOpacity
-                style={[styles.primaryButton, otp.length < 4 && styles.disabledButton]}
+                style={[styles.primaryButton, otp.length < 4 && styles.disabledButton, { backgroundColor: colors.primary, shadowColor: colors.primary }]}
                 onPress={handleVerifyOtp}
                 disabled={otp.length < 4 || loading}
               >
@@ -121,7 +123,7 @@ export default function LoginScreen() {
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.resendButton} onPress={() => setStep(1)}>
-                <Text style={styles.resendText}>Change Phone Number</Text>
+                <Text style={[styles.resendText, { color: colors.primary }]}>Change Phone Number</Text>
               </TouchableOpacity>
             </>
           )}
@@ -138,7 +140,6 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
   },
   keyboardView: {
     flex: 1,
@@ -154,15 +155,14 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: 'rgba(255, 61, 0, 0.1)',
+    backgroundColor: 'rgba(229, 57, 53, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
     borderWidth: 1.5,
-    borderColor: 'rgba(255, 61, 0, 0.3)',
+    borderColor: 'rgba(229, 57, 53, 0.3)',
   },
   logoText: {
-    color: '#FFFFFF',
     fontSize: 28,
     fontWeight: '900',
     letterSpacing: 0.5,
@@ -177,7 +177,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   sectionTitle: {
-    color: '#FFFFFF',
     fontSize: 22,
     fontWeight: '800',
     marginBottom: 8,
@@ -191,16 +190,13 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1E1E1E',
     borderRadius: 16,
     paddingHorizontal: 16,
     height: 56,
     borderWidth: 1,
-    borderColor: '#2D2D2D',
     marginBottom: 24,
   },
   countryCode: {
-    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
     marginLeft: 8,
@@ -208,7 +204,6 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
     paddingVertical: 0,
@@ -223,18 +218,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#FF3D00',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 8,
-    shadowColor: '#FF3D00',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 4,
   },
   disabledButton: {
-    backgroundColor: '#3A3A3A',
+    backgroundColor: '#8E8E93',
     shadowOpacity: 0,
     elevation: 0,
   },
@@ -248,7 +241,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   resendText: {
-    color: '#FF3D00',
     fontSize: 14,
     fontWeight: '700',
   },

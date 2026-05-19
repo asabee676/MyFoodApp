@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -14,18 +14,31 @@ import { MapPin, Phone, MessageSquare, Check, DollarSign, Compass, Award } from 
 import { useRiderStore } from '../store/riderStore';
 import { SwipeButton } from '../components/SwipeButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../context/ThemeContext';
+import { updateLocation } from '../utils/socket';
 
 export default function DeliveryScreen() {
   const router = useRouter();
-  const { status, activeOrder, advanceStatus } = useRiderStore();
+  const { colors } = useTheme();
+  const { status, activeOrder, advanceStatus, currentLocation } = useRiderStore();
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   const [useMockMap, setUseMockMap] = useState(Platform.OS === 'web');
 
+  // Stream location while order is active
+  useEffect(() => {
+    if (activeOrder && status !== 'completed' && currentLocation) {
+      const interval = setInterval(() => {
+        updateLocation(activeOrder.id, currentLocation.latitude, currentLocation.longitude);
+      }, 5000); // stream every 5 seconds
+      return () => clearInterval(interval);
+    }
+  }, [activeOrder, status, currentLocation]);
+
   if (!activeOrder) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>No active trip matched.</Text>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.replace('/(tabs)')}>
+      <View style={[styles.errorContainer, { backgroundColor: colors.background }]}>
+        <Text style={[styles.errorText, { color: colors.text }]}>No active trip matched.</Text>
+        <TouchableOpacity style={[styles.backButton, { backgroundColor: colors.primary }]} onPress={() => router.replace('/(tabs)')}>
           <Text style={styles.backText}>Return Dashboard</Text>
         </TouchableOpacity>
       </View>
@@ -68,19 +81,19 @@ export default function DeliveryScreen() {
   } else if (status === 'completed') {
     // Deliver Complete Screen
     return (
-      <SafeAreaView style={styles.successContainer}>
-        <View style={styles.successCard}>
+      <SafeAreaView style={[styles.successContainer, { backgroundColor: colors.background }]}>
+        <View style={[styles.successCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <View style={styles.awardCircle}>
-            <Award color="#FFFFFF" size={50} />
+            <Award stroke="#FFFFFF" size={50} />
           </View>
           <Text style={styles.successTitle}>DELIVERY COMPLETE!</Text>
-          <Text style={styles.successSubtitle}>Trip successfully delivered to {activeOrder.customerName}</Text>
-          <View style={styles.payoutSummary}>
-            <Text style={styles.payoutLabel}>YOU EARNED</Text>
-            <Text style={styles.payoutValue}>GH₵ {activeOrder.estimatedEarnings.toFixed(2)}</Text>
+          <Text style={[styles.successSubtitle, { color: colors.textSecondary }]}>Trip successfully delivered to {activeOrder.customerName}</Text>
+          <View style={[styles.payoutSummary, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.payoutLabel, { color: colors.textSecondary }]}>YOU EARNED</Text>
+            <Text style={[styles.payoutValue, { color: colors.text }]}>GH₵ {activeOrder.estimatedEarnings.toFixed(2)}</Text>
           </View>
           <Text style={styles.autoReturnText}>Returning to searching state shortly...</Text>
-          <TouchableOpacity style={styles.returnBtn} onPress={() => router.replace('/(tabs)')}>
+          <TouchableOpacity style={[styles.returnBtn, { backgroundColor: colors.primary }]} onPress={() => router.replace('/(tabs)')}>
             <Text style={styles.returnText}>Go to Dashboard Now</Text>
           </TouchableOpacity>
         </View>
@@ -89,14 +102,14 @@ export default function DeliveryScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Dynamic Map displaying routing lines */}
       {useMockMap ? (
-        <View style={styles.mockMap}>
-          <Compass color="#FF3D00" size={40} style={{ opacity: 0.15, position: 'absolute' }} />
-          <Text style={styles.mockMapText}>Active Routing Map Simulation</Text>
+        <View style={[styles.mockMap, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Compass stroke={colors.primary} size={40} style={{ opacity: 0.15, position: 'absolute' } as any} />
+          <Text style={[styles.mockMapText, { color: colors.textSecondary }]}>Active Routing Map Simulation</Text>
           <Text style={styles.mockMapSubtext}>
-            From: Accra Start Point -> To: {destinationName}
+            From: Accra Start Point {'->'} To: {destinationName}
           </Text>
         </View>
       ) : (
@@ -108,18 +121,18 @@ export default function DeliveryScreen() {
             latitudeDelta: 0.05,
             longitudeDelta: 0.05,
           }}
-          customMapStyle={darkMapStyle}
-          onError={() => setUseMockMap(true)}
+          customMapStyle={colors.mapStyle}
+          // Fallback handled via useMockMap state
         >
           {/* Markers */}
           <Marker coordinate={activeOrder.restaurantLocation} title={activeOrder.restaurantName}>
-            <View style={[styles.pinCircle, { backgroundColor: '#FF3D00' }]}>
+            <View style={[styles.pinCircle, { backgroundColor: colors.primary }]}>
               <Text style={styles.pinText}>R</Text>
             </View>
           </Marker>
 
           <Marker coordinate={activeOrder.customerLocation} title={activeOrder.customerName}>
-            <View style={[styles.pinCircle, { backgroundColor: '#4CAF50' }]}>
+            <View style={[styles.pinCircle, { backgroundColor: colors.success }]}>
               <Text style={styles.pinText}>C</Text>
             </View>
           </Marker>
@@ -130,7 +143,7 @@ export default function DeliveryScreen() {
               activeOrder.restaurantLocation,
               activeOrder.customerLocation
             ]}
-            strokeColor="#FF3D00"
+            strokeColor={colors.primary}
             strokeWidth={4}
           />
         </MapView>
@@ -138,54 +151,54 @@ export default function DeliveryScreen() {
 
       {/* Floating Header Navigation Step */}
       <SafeAreaView style={styles.topBar} edges={['top']}>
-        <View style={styles.topCard}>
-          <Text style={styles.stepTitle}>{stepTitle}</Text>
-          <Text style={styles.stepSubtitle}>{stepSubtitle}</Text>
+        <View style={[styles.topCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.stepTitle, { color: colors.primary }]}>{stepTitle}</Text>
+          <Text style={[styles.stepSubtitle, { color: colors.text }]}>{stepSubtitle}</Text>
         </View>
       </SafeAreaView>
 
       {/* Bottom Interactive Sheet */}
-      <View style={styles.bottomSheet}>
+      <View style={[styles.bottomSheet, { backgroundColor: colors.background, borderColor: colors.border }]}>
         <ScrollView style={styles.scrollContent} contentContainerStyle={{ paddingBottom: 24 }}>
           {/* Customer / Restaurant Profile Card */}
-          <View style={styles.infoCard}>
+          <View style={[styles.infoCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <View style={styles.infoRow}>
               <View style={styles.avatarCircle}>
-                <MapPin color="#FF3D00" size={24} />
+                <MapPin stroke={colors.primary} size={24} />
               </View>
               <View style={styles.infoDetails}>
-                <Text style={styles.locationTitle}>{destinationName}</Text>
-                <Text style={styles.locationAddress}>{destinationAddress}</Text>
+                <Text style={[styles.locationTitle, { color: colors.text }]}>{destinationName}</Text>
+                <Text style={[styles.locationAddress, { color: colors.textSecondary }]}>{destinationAddress}</Text>
               </View>
             </View>
 
             {/* Direct contact controls */}
             <View style={styles.contactRow}>
-              <TouchableOpacity style={styles.contactBtn}>
-                <Phone color="#E0E0E0" size={18} />
-                <Text style={styles.contactText}>Call</Text>
+              <TouchableOpacity style={[styles.contactBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                <Phone stroke={colors.icon} size={18} />
+                <Text style={[styles.contactText, { color: colors.text }]}>Call</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.contactBtn}>
-                <MessageSquare color="#E0E0E0" size={18} />
-                <Text style={styles.contactText}>Chat</Text>
+              <TouchableOpacity style={[styles.contactBtn, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                <MessageSquare stroke={colors.icon} size={18} />
+                <Text style={[styles.contactText, { color: colors.text }]}>Chat</Text>
               </TouchableOpacity>
             </View>
           </View>
 
           {/* Active Checklist (At Restaurant) */}
           {showChecklist && (
-            <View style={styles.checklistCard}>
-              <Text style={styles.cardHeader}>VERIFY PACKAGE ITEMS</Text>
+            <View style={[styles.checklistCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              <Text style={[styles.cardHeader, { color: colors.textSecondary }]}>VERIFY PACKAGE ITEMS</Text>
               {activeOrder.items.map((item, idx) => (
                 <TouchableOpacity
                   key={idx}
-                  style={styles.checkRow}
+                  style={[styles.checkRow, { borderColor: colors.border }]}
                   onPress={() => toggleCheckItem(item)}
                 >
-                  <View style={[styles.checkBox, checkedItems[item] && styles.checkBoxActive]}>
-                    {checkedItems[item] && <Check color="#FFFFFF" size={12} strokeWidth={3} />}
+                  <View style={[styles.checkBox, { borderColor: colors.border }, checkedItems[item] && styles.checkBoxActive]}>
+                    {checkedItems[item] && <Check stroke="#FFFFFF" size={12} strokeWidth={3} />}
                   </View>
-                  <Text style={[styles.checkText, checkedItems[item] && styles.checkTextActive]}>
+                  <Text style={[styles.checkText, { color: colors.text }, checkedItems[item] && [styles.checkTextActive, { color: colors.textSecondary }]]}>
                     {item}
                   </Text>
                 </TouchableOpacity>
@@ -195,13 +208,13 @@ export default function DeliveryScreen() {
 
           {/* Payment Block (At Customer Dropoff - Hubtel cash collection style) */}
           {showPaymentBlock && (
-            <View style={styles.paymentCard}>
-              <Text style={styles.cardHeader}>PAYMENT INSTRUCTION</Text>
+            <View style={[styles.paymentCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              <Text style={[styles.cardHeader, { color: colors.textSecondary }]}>PAYMENT INSTRUCTION</Text>
               <View style={styles.paymentRow}>
-                <DollarSign color="#FF3D00" size={28} />
+                <DollarSign stroke={colors.primary} size={28} />
                 <View>
-                  <Text style={styles.paymentType}>{activeOrder.paymentMethod}</Text>
-                  <Text style={styles.paymentDue}>
+                  <Text style={[styles.paymentType, { color: colors.text }]}>{activeOrder.paymentMethod}</Text>
+                  <Text style={[styles.paymentDue, { color: colors.primary }]}>
                     {activeOrder.paymentMethod === 'Cash on Delivery'
                       ? `Collect: GH₵ ${activeOrder.totalPrice.toFixed(2)}`
                       : 'Amount Prepaid Online'}
@@ -213,22 +226,22 @@ export default function DeliveryScreen() {
 
           {/* Customer delivery note */}
           {(status === 'heading_to_customer' || status === 'at_customer') && (
-            <View style={styles.notesCard}>
-              <Text style={styles.cardHeader}>DELIVERY NOTES</Text>
-              <Text style={styles.notesText}>"{activeOrder.deliveryNotes}"</Text>
+            <View style={[styles.notesCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              <Text style={[styles.cardHeader, { color: colors.textSecondary }]}>DELIVERY NOTES</Text>
+              <Text style={[styles.notesText, { color: colors.text }]}>"{activeOrder.deliveryNotes}"</Text>
             </View>
           )}
         </ScrollView>
 
         {/* Footer Swipe confirming action progression */}
-        <View style={styles.footerControls}>
+        <View style={[styles.footerControls, { backgroundColor: colors.background, borderColor: colors.border }]}>
           <SwipeButton
             onSwipeSuccess={advanceStatus}
             title={swipeActionLabel}
             color={
               showChecklist && !allItemsChecked
                 ? '#555555' // Disabled grey if items not checked yet
-                : '#FF3D00'
+                : colors.primary
             }
           />
         </View>
@@ -240,7 +253,6 @@ export default function DeliveryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
   },
   map: {
     width: Dimensions.get('window').width,
@@ -249,14 +261,11 @@ const styles = StyleSheet.create({
   mockMap: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height * 0.45,
-    backgroundColor: '#1E1E1E',
     justifyContent: 'center',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderColor: '#2D2D2D',
   },
   mockMapText: {
-    color: '#8E8E93',
     fontSize: 16,
     fontWeight: '700',
   },
@@ -288,11 +297,9 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   topCard: {
-    backgroundColor: '#1E1E1E',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#2D2D2D',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -300,24 +307,20 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   stepTitle: {
-    color: '#FF3D00',
     fontSize: 11,
     fontWeight: '800',
     letterSpacing: 1,
     marginBottom: 4,
   },
   stepSubtitle: {
-    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '700',
   },
   bottomSheet: {
     flex: 1,
-    backgroundColor: '#161616',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     borderWidth: 1,
-    borderColor: '#2D2D2D',
     marginTop: -24,
   },
   scrollContent: {
@@ -325,11 +328,9 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   infoCard: {
-    backgroundColor: '#1E1E1E',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#2D2D2D',
     marginBottom: 16,
   },
   infoRow: {
@@ -342,7 +343,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: 'rgba(255, 61, 0, 0.1)',
+    backgroundColor: 'rgba(229, 57, 53, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -350,12 +351,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   locationTitle: {
-    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '800',
   },
   locationAddress: {
-    color: '#8E8E93',
     fontSize: 13,
     marginTop: 2,
   },
@@ -368,28 +367,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#262626',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 6,
     borderWidth: 1,
-    borderColor: '#3A3A3A',
   },
   contactText: {
-    color: '#E0E0E0',
     fontSize: 13,
     fontWeight: '700',
   },
   checklistCard: {
-    backgroundColor: '#1E1E1E',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#2D2D2D',
     marginBottom: 16,
   },
   cardHeader: {
-    color: '#8E8E93',
     fontSize: 11,
     fontWeight: '800',
     letterSpacing: 0.5,
@@ -401,14 +394,12 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderColor: '#292929',
   },
   checkBox: {
     width: 20,
     height: 20,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: '#4E4E4E',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -417,20 +408,16 @@ const styles = StyleSheet.create({
     borderColor: '#4CAF50',
   },
   checkText: {
-    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '700',
   },
   checkTextActive: {
-    color: '#8E8E93',
     textDecorationLine: 'line-through',
   },
   paymentCard: {
-    backgroundColor: '#1E1E1E',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#2D2D2D',
     marginBottom: 16,
   },
   paymentRow: {
@@ -439,26 +426,21 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   paymentType: {
-    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '800',
   },
   paymentDue: {
-    color: '#FF3D00',
     fontSize: 14,
     fontWeight: '700',
     marginTop: 2,
   },
   notesCard: {
-    backgroundColor: '#1E1E1E',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#2D2D2D',
     marginBottom: 16,
   },
   notesText: {
-    color: '#E0E0E0',
     fontSize: 13,
     fontStyle: 'italic',
     lineHeight: 18,
@@ -466,22 +448,18 @@ const styles = StyleSheet.create({
   footerControls: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#161616',
     borderTopWidth: 1,
-    borderColor: '#262626',
     alignItems: 'center',
   },
   
   // Error View
   errorContainer: {
     flex: 1,
-    backgroundColor: '#121212',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
   },
   errorText: {
-    color: '#FFFFFF',
     fontSize: 18,
     fontWeight: '800',
     marginBottom: 16,
@@ -490,7 +468,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 24,
-    backgroundColor: '#FF3D00',
   },
   backText: {
     color: '#FFFFFF',
@@ -501,20 +478,17 @@ const styles = StyleSheet.create({
   // Success state layout (Hubtel shift success summary feel)
   successContainer: {
     flex: 1,
-    backgroundColor: '#121212',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
   },
   successCard: {
-    backgroundColor: '#1E1E1E',
     borderRadius: 24,
     padding: 24,
     width: '100%',
     maxWidth: 400,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2D2D2D',
   },
   awardCircle: {
     width: 100,
@@ -537,14 +511,12 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   successSubtitle: {
-    color: '#8E8E93',
     fontSize: 14,
     textAlign: 'center',
     marginTop: 8,
     lineHeight: 20,
   },
   payoutSummary: {
-    backgroundColor: '#161616',
     borderRadius: 16,
     paddingVertical: 16,
     paddingHorizontal: 24,
@@ -552,16 +524,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 24,
     borderWidth: 1,
-    borderColor: '#282828',
   },
   payoutLabel: {
-    color: '#8E8E93',
     fontSize: 11,
     fontWeight: '800',
     letterSpacing: 1,
   },
   payoutValue: {
-    color: '#FFFFFF',
     fontSize: 32,
     fontWeight: '900',
     marginTop: 4,
@@ -575,7 +544,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#FF3D00',
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
@@ -586,12 +554,3 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
 });
-
-// Sleek dark map style
-const darkMapStyle = [
-  { elementType: 'geometry', stylers: [{ color: '#161616' }] },
-  { elementType: 'labels.text.stroke', stylers: [{ color: '#161616' }] },
-  { elementType: 'labels.text.fill', stylers: [{ color: '#747474' }] },
-  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#252525' }] },
-  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0d0d0d' }] },
-];

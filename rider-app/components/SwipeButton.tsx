@@ -8,6 +8,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { ChevronsRight } from 'lucide-react-native';
+import { useTheme } from '../context/ThemeContext';
 
 interface SwipeButtonProps {
   onSwipeSuccess: () => void;
@@ -21,8 +22,10 @@ const SWIPE_RANGE = BUTTON_WIDTH - 64; // Button padding + slider size
 export const SwipeButton: React.FC<SwipeButtonProps> = ({
   onSwipeSuccess,
   title,
-  color = '#E53935', // Brand red default
+  color,
 }) => {
+  const { colors } = useTheme();
+  const effectiveColor = color || colors.primary;
   const pan = useRef(new Animated.ValueXY()).current;
   const [success, setSuccess] = useState(false);
 
@@ -70,10 +73,10 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
   ).current;
 
   return (
-    <View style={[styles.container, { borderColor: color }]}>
+    <View style={[styles.container, { backgroundColor: colors.surface, borderColor: effectiveColor }]}>
       {/* Background slide track text */}
       <View style={styles.textContainer}>
-        <Text style={styles.swipeText}>{success ? 'Success!' : title}</Text>
+        <Text style={[styles.swipeText, { color: colors.text }]}>{success ? 'Success!' : title}</Text>
       </View>
 
       {/* Swipe slider thumb */}
@@ -82,12 +85,12 @@ export const SwipeButton: React.FC<SwipeButtonProps> = ({
           styles.slider,
           {
             transform: [{ translateX: pan.x }],
-            backgroundColor: color,
+            backgroundColor: effectiveColor,
           },
         ]}
         {...panResponder.panHandlers}
       >
-        <ChevronsRight color="#FFFFFF" size={24} />
+        <ChevronsRight stroke="#FFFFFF" size={24} />
       </Animated.View>
     </View>
   );
@@ -99,7 +102,6 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 28,
     borderWidth: 1.5,
-    backgroundColor: '#1E1E1E',
     justifyContent: 'center',
     paddingHorizontal: 4,
     position: 'relative',
@@ -113,7 +115,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   swipeText: {
-    color: '#E0E0E0',
     fontSize: 15,
     fontWeight: '700',
     letterSpacing: 0.5,
