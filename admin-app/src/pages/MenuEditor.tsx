@@ -1,27 +1,48 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Search, Edit2, Trash2 } from 'lucide-react';
-
-interface MenuItem {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  restaurant: string;
-  available: boolean;
-}
-
-const mockMenu: MenuItem[] = [
-  { id: 'm1', name: 'Zinger Burger', category: 'Burgers', price: 45.00, restaurant: 'KFC Ghana', available: true },
-  { id: 'm2', name: 'Streetwise 2', category: 'Chicken', price: 65.00, restaurant: 'KFC Ghana', available: true },
-  { id: 'm3', name: 'Whopper Meal', category: 'Burgers', price: 85.00, restaurant: 'Burger King', available: true },
-  { id: 'm4', name: 'Fried Rice & Chicken', category: 'Local', price: 55.00, restaurant: 'Papaye', available: false },
-];
+import api from '../utils/api';
 
 export function MenuEditor() {
-  const [items, setItems] = useState<MenuItem[]>(mockMenu);
+  const [items, setItems] = useState<any[]>([]);
+  const [restaurants, setRestaurants] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const toggleAvailability = (id: string) => {
-    setItems(items.map(item => item.id === id ? { ...item, available: !item.available } : item));
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const res = await api.get('/restaurants');
+      const rests = res.data.data || [];
+      setRestaurants(rests);
+
+      // Flatten menu items
+      const allItems: any[] = [];
+      rests.forEach((r: any) => {
+        if (r.menu) {
+          r.menu.forEach((m: any) => {
+            allItems.push({ ...m, restaurantId: r.id, restaurantName: r.name });
+          });
+        }
+      });
+      setItems(allItems);
+    } catch (err) {
+      console.error('Failed to fetch menus', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleAvailability = async (restaurantId: string, itemId: string, currentAvail: boolean) => {
+    // optimistic update
+    setItems(items.map(item => item.id === itemId ? { ...item, available: !currentAvail } : item));
+    try {
+      await api.put(`/restaurants/${restaurantId}/menu/${itemId}`, { available: !currentAvail });
+    } catch (err) {
+      console.error('Failed to update availability', err);
+      fetchData(); // revert
+    }
   };
 
   return (
@@ -50,9 +71,9 @@ export function MenuEditor() {
           <div style={{ display: 'flex', gap: '12px' }}>
             <select style={{ width: '180px' }}>
               <option value="all">All Restaurants</option>
-              <option value="kfc">KFC Ghana</option>
-              <option value="bk">Burger King</option>
-              <option value="papaye">Papaye</option>
+              {restaurants.map((r: any) => (
+                <option key={r.id} value={r.id}>{r.name}</option>
+              ))}
             </select>
           </div>
         </div>
@@ -70,19 +91,21 @@ export function MenuEditor() {
               </tr>
             </thead>
             <tbody>
-              {items.map((item) => (
-                <tr key={item.id}>
+              {loading ? (
+                <tr><td colSpan={6} style={{ textAlign: 'center', padding: '24px' }}>Loading...</td></tr>
+              ) : items.map((item) => (
+                <tr key={`${item.restaurantId}-${item.id}`}>
                   <td style={{ fontWeight: 600 }}>{item.name}</td>
-                  <td>{item.restaurant}</td>
+                  <td>{item.restaurantName}</td>
                   <td>{item.category}</td>
-                  <td style={{ fontWeight: 600 }}>${item.price.toFixed(2)}</td>
+                  <td style={{ fontWeight: 600 }}>₵{item.price.toFixed(2)}</td>
                   <td>
                     <button 
-                      onClick={() => toggleAvailability(item.id)}
-                      className={`badge ${item.available ? 'badge-success' : 'badge-danger'}`}
+                      onClick={() => toggleAvailability(item.restaurantId, item.id, item.available ?? true)}
+                      className={`badge ${(item.available ?? true) ? 'badge-success' : 'badge-danger'}`}
                       style={{ cursor: 'pointer', border: 'none' }}
                     >
-                      {item.available ? 'In Stock' : 'Out of Stock'}
+                      {(item.available ?? true) ? 'In Stock' : 'Out of Stock'}
                     </button>
                   </td>
                   <td style={{ textAlign: 'right' }}>
@@ -90,7 +113,12 @@ export function MenuEditor() {
                       <button className="btn-icon">
                         <Edit2 size={16} />
                       </button>
-                      <button className="btn-icon" style={{ color: 'var(--danger)' }}>
+                      <button className="btn-icon" style={{ color: 'var(--danger)' }} onClick={async () => {
+                        if (confirm('Are you sure?')) {
+                          await api.delete(`/restaurants/${item.restaurantId}/menu/${item.id}`);
+                          fetchData();
+                        }
+                      }}>
                         <Trash2 size={16} />
                       </button>
                     </div>

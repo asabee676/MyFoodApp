@@ -1,23 +1,51 @@
-import { useState } from 'react';
-import { mockOrders, type Order } from '../data/mockData';
+import { useState, useEffect } from 'react';
+import { type Order } from '../data/mockData';
 import { Search, Filter, Clock, CheckCircle2, XCircle, Truck } from 'lucide-react';
+import api from '../utils/api';
 
 export function Orders() {
-  const [orders, setOrders] = useState<Order[]>(mockOrders);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'pending': return <Clock size={16} className="text-warning" />;
-      case 'processing': return <Truck size={16} className="text-info" />;
+      case 'processing': return <Clock size={16} className="text-warning" />;
+      case 'heading_to_restaurant': return <Truck size={16} className="text-info" />;
+      case 'at_restaurant': return <Truck size={16} className="text-info" />;
+      case 'heading_to_customer': return <Truck size={16} className="text-info" />;
+      case 'at_customer': return <Truck size={16} className="text-info" />;
       case 'delivered': return <CheckCircle2 size={16} className="text-success" />;
       case 'cancelled': return <XCircle size={16} className="text-danger" />;
       default: return null;
     }
   };
 
-  const handleStatusChange = (id: string, newStatus: Order['status']) => {
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      const res = await api.get('/orders');
+      setOrders(res.data.data || []);
+    } catch (err) {
+      console.error('Failed to fetch orders', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    // optimistic update
     setOrders(orders.map(o => o.id === id ? { ...o, status: newStatus } : o));
+    try {
+      await api.put(`/orders/${id}`, { status: newStatus });
+    } catch (err) {
+      console.error('Status update failed', err);
+      fetchOrders(); // revert on failure
+    }
   };
 
   const filteredOrders = filter === 'all' ? orders : orders.filter(o => o.status === filter);
@@ -67,17 +95,19 @@ export function Orders() {
               </tr>
             </thead>
             <tbody>
-              {filteredOrders.map((order) => (
+              {loading ? (
+                <tr><td colSpan={7} style={{ textAlign: 'center', padding: '24px' }}>Loading...</td></tr>
+              ) : filteredOrders.map((order) => (
                 <tr key={order.id}>
-                  <td style={{ fontWeight: 600 }}>{order.id}</td>
-                  <td style={{ color: 'var(--text-muted)' }}>{order.date}</td>
+                  <td style={{ fontWeight: 600 }}>{order.id.slice(0,8)}...</td>
+                  <td style={{ color: 'var(--text-muted)' }}>{new Date(order.date).toLocaleString()}</td>
                   <td>{order.customerName}</td>
                   <td>{order.restaurantName}</td>
-                  <td style={{ fontWeight: 600 }}>${order.amount.toFixed(2)}</td>
+                  <td style={{ fontWeight: 600 }}>₵{order.total.toFixed(2)}</td>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       {getStatusIcon(order.status)}
-                      <span style={{ textTransform: 'capitalize', fontWeight: 500 }}>{order.status}</span>
+                      <span style={{ textTransform: 'capitalize', fontWeight: 500 }}>{order.status.replace(/_/g, ' ')}</span>
                     </div>
                   </td>
                   <td style={{ textAlign: 'right' }}>
@@ -85,10 +115,11 @@ export function Orders() {
                       className="btn-secondary"
                       style={{ padding: '6px 10px', fontSize: '13px', borderRadius: '4px' }}
                       value={order.status}
-                      onChange={(e) => handleStatusChange(order.id, e.target.value as Order['status'])}
+                      onChange={(e) => handleStatusChange(order.id, e.target.value)}
                     >
                       <option value="pending">Mark Pending</option>
                       <option value="processing">Mark Processing</option>
+                      <option value="heading_to_restaurant">Rider En Route</option>
                       <option value="delivered">Mark Delivered</option>
                       <option value="cancelled">Cancel Order</option>
                     </select>

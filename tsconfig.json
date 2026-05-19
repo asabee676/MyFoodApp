@@ -2,16 +2,22 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+    "jsx": "react-jsx"
   },
   "include": [
+    "app/**/*",
+    "components/**/*",
+    "context/**/*",
+    "hooks/**/*",
+    "i18n/**/*",
+    "constants/**/*",
     "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "admin-app",
+    "rider-app",
+    "myapp"
   ]
 }

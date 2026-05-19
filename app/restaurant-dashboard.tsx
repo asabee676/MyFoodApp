@@ -1,9 +1,12 @@
+// Restaurant Dashboard Screen - Chowdeck/KaleDash Premium Merchant Interface
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, FlatList, Dimensions, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
+
+const Touch = TouchableOpacity as any;
 
 const { width } = Dimensions.get('window');
 
@@ -36,14 +39,14 @@ export default function RestaurantDashboard() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+        <Touch onPress={() => router.back()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
-        </TouchableOpacity>
+        </Touch>
         <Text style={[styles.headerTitle, { color: colors.text }]}>{t('merchant_dashboard')}</Text>
-        <TouchableOpacity style={styles.notifBtn}>
+        <Touch style={styles.notifBtn}>
           <Ionicons name="notifications-outline" size={24} color={colors.text} />
           <View style={styles.notifBadge} />
-        </TouchableOpacity>
+        </Touch>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} style={styles.content}>
@@ -56,7 +59,7 @@ export default function RestaurantDashboard() {
           <FlatList
             data={stats}
             renderItem={renderStatCard}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item: any) => item.id}
             numColumns={2}
             scrollEnabled={false}
             columnWrapperStyle={styles.statRow}
@@ -65,9 +68,9 @@ export default function RestaurantDashboard() {
 
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('live_orders')}</Text>
-          <TouchableOpacity>
+          <Touch>
             <Text style={[styles.seeAll, { color: colors.primary }]}>{t('view_history')}</Text>
-          </TouchableOpacity>
+          </Touch>
         </View>
 
         {recentOrders.map((order) => (
@@ -90,18 +93,18 @@ export default function RestaurantDashboard() {
         <View style={styles.quickActions}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('quick_actions')}</Text>
           <View style={styles.actionGrid}>
-            <TouchableOpacity style={[styles.actionBtn, { backgroundColor: colors.card }]}>
+            <Touch style={[styles.actionBtn, { backgroundColor: colors.card }]}>
               <Ionicons name="restaurant-outline" size={24} color={colors.primary} />
               <Text style={[styles.actionLabel, { color: colors.text }]}>{t('manage_menu')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.actionBtn, { backgroundColor: colors.card }]}>
+            </Touch>
+            <Touch style={[styles.actionBtn, { backgroundColor: colors.card }]}>
               <Ionicons name="settings-outline" size={24} color={colors.primary} />
               <Text style={[styles.actionLabel, { color: colors.text }]}>{t('shop_settings')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.actionBtn, { backgroundColor: colors.card }]}>
+            </Touch>
+            <Touch style={[styles.actionBtn, { backgroundColor: colors.card }]}>
               <Ionicons name="people-outline" size={24} color={colors.primary} />
               <Text style={[styles.actionLabel, { color: colors.text }]}>{t('support')}</Text>
-            </TouchableOpacity>
+            </Touch>
           </View>
         </View>
       </ScrollView>
