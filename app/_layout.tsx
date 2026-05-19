@@ -22,7 +22,6 @@ function RootLayoutContent() {
         <CartProvider>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
             <Stack.Screen name="cart" options={{ presentation: 'modal', headerShown: false }} />
             <Stack.Screen name="location-picker" options={{ presentation: 'modal', headerShown: false }} />
             <Stack.Screen name="index" options={{ headerShown: false }} />
