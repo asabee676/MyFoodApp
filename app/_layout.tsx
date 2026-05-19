@@ -1,20 +1,20 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 
 import { CartProvider } from '../context/CartContext';
 import { LocationProvider } from '../context/LocationContext';
 import { ThemeProvider as CustomThemeProvider, useTheme } from '../context/ThemeContext';
-import '../i18n'; // Import i18n setup
+import { AuthProvider } from '../context/AuthContext';
+import '../i18n';
 
 export const unstable_settings = {
   initialRouteName: 'signup',
 };
 
 function RootLayoutContent() {
-  const { isDark, colors } = useTheme();
+  const { isDark } = useTheme();
 
   return (
     <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
@@ -30,7 +30,7 @@ function RootLayoutContent() {
             <Stack.Screen name="signup" options={{ headerShown: false }} />
             <Stack.Screen name="restaurant-dashboard" options={{ headerShown: false }} />
           </Stack>
-          <StatusBar style={isDark ? "light" : "dark"} />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
         </CartProvider>
       </LocationProvider>
     </ThemeProvider>
@@ -40,7 +40,9 @@ function RootLayoutContent() {
 export default function RootLayout() {
   return (
     <CustomThemeProvider>
-      <RootLayoutContent />
+      <AuthProvider>
+        <RootLayoutContent />
+      </AuthProvider>
     </CustomThemeProvider>
   );
 }

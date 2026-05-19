@@ -1,25 +1,42 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, FlatList, TextInput, SafeAreaView, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, FlatList, TextInput, SafeAreaView, Platform, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import data from '../../data/sample-restaurants.json';
 import { useLocation } from '../../context/LocationContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
+import api from '../../utils/api';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { categories, restaurants, promos } = data;
+  const { categories, promos } = data;
+  const [restaurants, setRestaurants] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const { location } = useLocation();
   const { colors, isDark } = useTheme();
   const { t } = useTranslation();
 
+  useEffect(() => {
+    const fetchRestaurants = async () => {
+      try {
+        const response = await api.get('/restaurants');
+        setRestaurants(response.data.data || []);
+      } catch (err) {
+        console.error('Failed to fetch restaurants:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRestaurants();
+  }, []);
+
   // Filter restaurants based on search query
   const filteredRestaurants = restaurants.filter(restaurant => 
     restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    restaurant.cuisine.some(c => c.toLowerCase().includes(searchQuery.toLowerCase())) ||
-    restaurant.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
+    restaurant.cuisine.some((c: string) => c.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    restaurant.tags.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const renderCategory = ({ item }: { item: any }) => (
@@ -127,7 +144,9 @@ export default function HomeScreen() {
         </View>
         
         <View style={styles.restaurantsList}>
-          {filteredRestaurants.length > 0 ? (
+          {loading ? (
+            <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 40 }} />
+          ) : filteredRestaurants.length > 0 ? (
             filteredRestaurants.map((restaurant: any) => (
               <React.Fragment key={restaurant.id}>
                 {renderRestaurant({ item: restaurant })}

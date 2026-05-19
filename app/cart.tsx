@@ -1,11 +1,12 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Platform, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useCart } from '../context/CartContext';
 import { useLocation } from '../context/LocationContext';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
+import api from '../utils/api';
 
 export default function CartScreen() {
   const router = useRouter();
@@ -13,14 +14,45 @@ export default function CartScreen() {
   const { location } = useLocation();
   const { colors, isDark } = useTheme();
   const { t } = useTranslation();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const deliveryFee = items.length > 0 ? 5.00 : 0; 
   const total = totalPrice + deliveryFee;
 
-  const handleCheckout = () => {
-    alert(t('order_success'));
-    clearCart();
-    router.replace('/(tabs)/orders'); 
+  const handleCheckout = async () => {
+    if (items.length === 0) return;
+    
+    setIsCheckingOut(true);
+    try {
+      // Create order payload from cart items
+      // Ensure we pass restaurantId from the first item (assuming same restaurant for now)
+      const restaurantId = items[0]?.restaurantId || 'r1'; 
+      
+      const payload = {
+        restaurantId,
+        items: items.map(item => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity
+        })),
+        total,
+        deliveryAddress: location || 'Accra, Ghana',
+        // default dummy coordinates if location picker doesn't set it
+        deliveryCoordinates: { latitude: 5.6037, longitude: -0.1870 } 
+      };
+
+      await api.post('/orders', payload);
+      
+      Alert.alert('Success', t('order_success'));
+      clearCart();
+      router.replace('/(tabs)/orders'); 
+    } catch (err: any) {
+      console.error('Checkout failed:', err.response?.data || err);
+      Alert.alert('Checkout Failed', err.response?.data?.message || 'Something went wrong');
+    } finally {
+      setIsCheckingOut(false);
+    }
   };
 
   if (items.length === 0) {
@@ -114,8 +146,16 @@ export default function CartScreen() {
       </ScrollView>
 
       <View style={[styles.bottomBar, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
-        <TouchableOpacity style={[styles.checkoutBtn, { backgroundColor: colors.primary }]} onPress={handleCheckout}>
-          <Text style={styles.checkoutBtnText}>{t('checkout')} • ₵{total.toFixed(2)}</Text>
+        <TouchableOpacity 
+          style={[styles.checkoutBtn, { backgroundColor: colors.primary }]} 
+          onPress={handleCheckout}
+          disabled={isCheckingOut}
+        >
+          {isCheckingOut ? (
+            <ActivityIndicator color="#FFF" />
+          ) : (
+            <Text style={styles.checkoutBtnText}>{t('checkout')} • ₵{total.toFixed(2)}</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>
