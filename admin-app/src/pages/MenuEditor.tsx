@@ -6,6 +6,14 @@ export function MenuEditor() {
   const [items, setItems] = useState<any[]>([]);
   const [restaurants, setRestaurants] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newItem, setNewItem] = useState({
+    restaurantId: '',
+    name: '',
+    category: '',
+    price: 0,
+    available: true
+  });
 
   useEffect(() => {
     fetchData();
@@ -45,6 +53,27 @@ export function MenuEditor() {
     }
   };
 
+  const handleAddItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newItem.restaurantId || !newItem.name || !newItem.price) return;
+    
+    try {
+      await api.post(`/restaurants/${newItem.restaurantId}/menu`, {
+        name: newItem.name,
+        category: newItem.category || 'General',
+        price: Number(newItem.price),
+        image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=200',
+        available: newItem.available
+      });
+      fetchData();
+      setIsModalOpen(false);
+      setNewItem({ restaurantId: '', name: '', category: '', price: 0, available: true });
+    } catch (err) {
+      console.error('Failed to add item', err);
+      alert('Error adding menu item');
+    }
+  };
+
   return (
     <div className="animate-in">
       <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -52,7 +81,7 @@ export function MenuEditor() {
           <h1 style={{ fontSize: '28px', marginBottom: '8px' }}>Menu Editor</h1>
           <p style={{ color: 'var(--text-muted)' }}>Manage menu items, pricing, and availability.</p>
         </div>
-        <button className="btn btn-primary">
+        <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
           <Plus size={18} />
           Add Item
         </button>
@@ -129,6 +158,48 @@ export function MenuEditor() {
           </table>
         </div>
       </div>
+
+      {isModalOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="glass-card" style={{ width: '500px', padding: '32px' }}>
+            <h2 style={{ marginBottom: '24px' }}>Add New Menu Item</h2>
+            <form onSubmit={handleAddItem} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Select Restaurant</label>
+                <select 
+                  style={{ width: '100%', padding: '10px' }} 
+                  value={newItem.restaurantId} 
+                  onChange={e => setNewItem({...newItem, restaurantId: e.target.value})}
+                  required
+                >
+                  <option value="">Choose a restaurant...</option>
+                  {restaurants.map(r => (
+                    <option key={r.id} value={r.id}>{r.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Item Name</label>
+                <input type="text" value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} style={{ width: '100%' }} required />
+              </div>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Category</label>
+                  <input type="text" value={newItem.category} onChange={e => setNewItem({...newItem, category: e.target.value})} style={{ width: '100%' }} placeholder="e.g. Burgers" required />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Price (₵)</label>
+                  <input type="number" min="0" step="0.01" value={newItem.price} onChange={e => setNewItem({...newItem, price: Number(e.target.value)})} style={{ width: '100%' }} required />
+                </div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Save Item</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
